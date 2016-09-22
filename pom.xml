@@ -23,7 +23,7 @@
             <version>20160212</version>
         </dependency>
     </dependencies>
-        <build>
+    <build>
         <plugins>
             <!-- correct java version -->
             <plugin>
