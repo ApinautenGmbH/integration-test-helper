@@ -517,13 +517,16 @@ public class AomHttpClient
 
 	/**
 	 * creates an object of the given dataModelName and moduleName <br/>
-	 * the appname which is set in this object will be used
+	 * the appname which is set in this object will be used<br/>
+	 *
+	 * This method is deprecated, use {@link #createObject(String, String, JSONObject)} instead
 	 *
 	 * @param moduleName the modulenname
 	 * @param dataModelName the name of the datamodels
 	 * @param otherFields the other fields to set as NameValuePairs
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
+	@Deprecated
 	public HttpMethod createObject( String moduleName, String dataModelName, NameValuePair... otherFields )
 	{
 		final PostMethod request =
@@ -553,6 +556,41 @@ public class AomHttpClient
 				"UTF-8" );
 			request.setRequestEntity( requestEntity );
 
+			this.client.executeMethod( request );
+		}
+		catch ( IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return request;
+	}
+
+	/**
+	 * creates an object of the given dataModelName and moduleName <br/>
+	 * the appname which is set in this object will be used
+	 *
+	 * @param moduleName the modulenname
+	 * @param dataModelName the name of the datamodels
+	 * @param otherFieldsObject the other fields to set as JSONObject (the @type field will be added automatically)
+	 * @return the {@link HttpMethod} object after executing the request
+	 */
+	public HttpMethod createObject( String moduleName, String dataModelName, JSONObject otherFieldsObject )
+	{
+		final PostMethod request =
+			new PostMethod( this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/" + dataModelName );
+		setAuthorizationHeader( request );
+		request.setRequestHeader( "ContentType", "application/json" );
+		request.setRequestHeader( "x-apiomat-apikey", this.apiKey );
+		request.setRequestHeader( "x-apiomat-system", this.system.toString( ) );
+		request.setRequestHeader( "x-apiomat-sdkVersion", "1.0" );
+		try
+		{
+
+			otherFieldsObject.put( "@type", moduleName + '$' + dataModelName );
+			StringRequestEntity requestEntity =
+				new StringRequestEntity( otherFieldsObject.toString( ), "application/json", "UTF-8" );
+			request.setRequestEntity( requestEntity );
+			System.out.println( otherFieldsObject.toString( ) );
 			this.client.executeMethod( request );
 		}
 		catch ( IOException e )
