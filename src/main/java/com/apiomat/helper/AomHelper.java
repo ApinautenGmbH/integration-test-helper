@@ -73,7 +73,7 @@ public class AomHelper
 	/**
 	 * @param target - ant-target
 	 * @param path - system-path of nm
-	 * @param userPassword - the customer´s password
+	 * @param userPassword - the customers password
 	 * @return success-string
 	 * @throws Exception
 	 */
