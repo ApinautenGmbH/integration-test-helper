@@ -630,6 +630,35 @@ public class AomHttpClient
 	}
 
 	/**
+	 * Get a list of objects for the given query
+	 *
+	 * @param moduleName
+	 * @param dataModelName
+	 * @param query
+	 * @return
+	 */
+	public HttpMethod getObjects( String moduleName, String dataModelName, String query )
+	{
+		GetMethod request =
+			new GetMethod( this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/" + dataModelName +
+				"?q=" + query );
+		setAuthorizationHeader( request );
+		request.setRequestHeader( "ContentType", "application/json" );
+		request.setRequestHeader( "x-apiomat-apikey", this.apiKey );
+		request.setRequestHeader( "x-apiomat-system", this.system.toString( ) );
+		request.setRequestHeader( "x-apiomat-sdkVersion", "1.0" );
+		try
+		{
+			this.client.executeMethod( request );
+		}
+		catch ( IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return request;
+	}
+
+	/**
 	 * updates an object of the given dataModelName and moduleName <br/>
 	 * the appname which is set in this object will be used
 	 *
@@ -664,9 +693,17 @@ public class AomHttpClient
 			{
 				sb.append( "\"" );
 				sb.append( nvp.getName( ) );
-				sb.append( "\":\"" );
+				sb.append( "\":" );
+				if ( nvp.getValue( ).startsWith( "[" ) == false )
+				{
+					sb.append( "\"" );
+				}
 				sb.append( nvp.getValue( ) );
-				sb.append( "\"," );
+				if ( nvp.getValue( ).startsWith( "[" ) == false )
+				{
+					sb.append( "\"" );
+				}
+				sb.append( "," );
 			}
 			sb.delete( sb.length( ) - 1, sb.length( ) );
 			sb.append( "}" );
