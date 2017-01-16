@@ -48,7 +48,8 @@ import org.junit.Assert;
 /**
  * @author thum
  */
-public class AomHttpClient {
+public class AomHttpClient
+{
 	private final String yambasHost;
 
 	private final String yambasBase;
@@ -74,7 +75,8 @@ public class AomHttpClient {
 	 *
 	 * @param host
 	 */
-	public AomHttpClient(String host, AOMSystem system) {
+	public AomHttpClient( String host, AOMSystem system )
+	{
 		this.yambasHost = host == null ? System.getProperty("yambasHost", "http://localhost:8080") : host;
 		this.yambasBase = this.yambasHost + "/yambas/rest/";
 		this.system = system;
@@ -85,35 +87,40 @@ public class AomHttpClient {
 	 *
 	 * @return the underlying httpclient
 	 */
-	public HttpClient getHttpClient() {
+	public HttpClient getHttpClient()
+	{
 		return this.client;
 	}
 
 	/**
 	 * @return the userName
 	 */
-	public String getUserName() {
+	public String getUserName()
+	{
 		return this.userName;
 	}
 
 	/**
 	 * @return the password
 	 */
-	public String getPassword() {
+	public String getPassword()
+	{
 		return this.password;
 	}
 
 	/**
 	 * @return the accessToken
 	 */
-	public String getAccessToken() {
+	public String getAccessToken()
+	{
 		return this.accessToken;
 	}
 
 	/**
 	 * @return the apiKey
 	 */
-	public String getApiKey() {
+	public String getApiKey()
+	{
 		return this.apiKey;
 	}
 
@@ -121,14 +128,16 @@ public class AomHttpClient {
 	 * @param apiKey
 	 *            the apiKey to set
 	 */
-	public void setApiKey(String apiKey) {
+	public void setApiKey(String apiKey)
+	{
 		this.apiKey = apiKey;
 	}
 
 	/**
 	 * @return the appName
 	 */
-	public String getAppName() {
+	public String getAppName()
+	{
 		return this.appName;
 	}
 
@@ -136,7 +145,8 @@ public class AomHttpClient {
 	 * @param appName
 	 *            the appName to set
 	 */
-	public void setAppName(String appName) {
+	public void setAppName(String appName)
+	{
 		this.appName = appName;
 	}
 
@@ -146,7 +156,8 @@ public class AomHttpClient {
 	 * @param username
 	 * @param password
 	 */
-	public void setCredentials(String username, String password) {
+	public void setCredentials(String username, String password)
+	{
 		this.accessToken = null;
 		this.userName = username;
 		this.password = password;
@@ -157,7 +168,8 @@ public class AomHttpClient {
 	 *
 	 * @param accessToken
 	 */
-	public void setCredentials(String accessToken) {
+	public void setCredentials(String accessToken)
+	{
 		this.userName = null;
 		this.password = null;
 		this.accessToken = accessToken;
@@ -166,14 +178,16 @@ public class AomHttpClient {
 	/**
 	 * @return the system
 	 */
-	public AOMSystem getSystem() {
+	public AOMSystem getSystem()
+	{
 		return this.system;
 	}
 
 	/**
 	 * @return the customerName
 	 */
-	public String getCustomerName() {
+	public String getCustomerName()
+	{
 		return this.customerName;
 	}
 
@@ -181,43 +195,49 @@ public class AomHttpClient {
 	 * @param customerName
 	 *            the customerName to set
 	 */
-	public void setCustomerName(String customerName) {
+	public void setCustomerName(String customerName)
+	{
 		this.customerName = customerName;
 	}
 
 	/**
 	 * @return the yambasHost
 	 */
-	public String getYambasHost() {
+	public String getYambasHost()
+	{
 		return this.yambasHost;
 	}
 
 	/**
 	 * @return the yambasBase
 	 */
-	public String getYambasBase() {
+	public String getYambasBase()
+	{
 		return this.yambasBase;
 	}
 
 	/**
-	 * creates the customer and sets it automatically as customerName (
-	 * {@link #getCustomerName()})
+	 * creates the customer and sets it automatically as customerName ( {@link #getCustomerName()})
 	 *
 	 * @param customerName
 	 * @param email
 	 * @param password
 	 * @return the statuscode
 	 */
-	public HttpMethod createCustomer(String customerName, String email, String password) {
+	public HttpMethod createCustomer(String customerName, String email, String password)
+	{
 		PostMethod request = new PostMethod(this.yambasBase + "customers");
 		setAuthorizationHeader(request);
 		NameValuePair[] data = { new NameValuePair("name", customerName), new NameValuePair("email", email),
-				new NameValuePair("password", password) };
+			new NameValuePair("password", password) };
 		request.setRequestBody(data);
-		try {
+		try
+		{
 			this.client.executeMethod(request);
 			this.customerName = customerName;
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -229,7 +249,8 @@ public class AomHttpClient {
 	 * @param appName
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod createApp(String appName) {
+	public HttpMethod createApp(String appName)
+	{
 		return createApp(this.customerName, appName);
 	}
 
@@ -242,15 +263,19 @@ public class AomHttpClient {
 	 *            the name of the app to create
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod createApp(String customerName, String appName) {
+	public HttpMethod createApp(String customerName, String appName)
+	{
 		PostMethod request = new PostMethod(this.yambasBase + "customers/" + customerName + "/apps");
 		setAuthorizationHeader(request);
 		NameValuePair[] data = { new NameValuePair("name", appName), };
 		request.setRequestBody(data);
-		try {
+		try
+		{
 			this.client.executeMethod(request);
 			this.appName = appName;
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -262,7 +287,8 @@ public class AomHttpClient {
 	 * @param moduleName
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod addModuleToApp(String moduleName) {
+	public HttpMethod addModuleToApp(String moduleName)
+	{
 		return addModuleToApp(this.customerName, this.appName, moduleName);
 	}
 
@@ -277,16 +303,20 @@ public class AomHttpClient {
 	 *            the name of the module to add
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod addModuleToApp(String customerName, String appName, String moduleName) {
+	public HttpMethod addModuleToApp(String customerName, String appName, String moduleName)
+	{
 		PostMethod request = new PostMethod(
-				this.yambasBase + "customers/" + customerName + "/apps/" + appName + "/usedmodules");
+			this.yambasBase + "customers/" + customerName + "/apps/" + appName + "/usedmodules");
 		setAuthorizationHeader(request);
 		request.setRequestHeader("x-apiomat-system", this.system.toString());
 		NameValuePair[] data = { new NameValuePair("moduleName", moduleName), };
 		request.setRequestBody(data);
-		try {
+		try
+		{
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -299,14 +329,17 @@ public class AomHttpClient {
 	 *            the name of the module to add
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod updateModule(String moduleName, NameValuePair... nvps) {
+	public HttpMethod updateModule(String moduleName, NameValuePair... nvps)
+	{
 		PutMethod request = new PutMethod(this.yambasBase + "modules/" + moduleName);
 		setAuthorizationHeader(request);
 		request.setRequestHeader("x-apiomat-system", this.system.toString());
-		try {
+		try
+		{
 			StringBuilder sb = new StringBuilder();
 			sb.append("{");
-			for (NameValuePair nvp : nvps) {
+			for (NameValuePair nvp : nvps)
+			{
 				sb.append("\"");
 				sb.append(nvp.getName());
 				sb.append("\":\"");
@@ -320,7 +353,9 @@ public class AomHttpClient {
 			request.setRequestEntity(requestEntity);
 
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -331,7 +366,8 @@ public class AomHttpClient {
 	 *
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod deployApp() {
+	public HttpMethod deployApp()
+	{
 		return deployApp(this.customerName, this.appName);
 	}
 
@@ -344,18 +380,23 @@ public class AomHttpClient {
 	 *            the name of the app
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod deployApp(String customerName, String appName) {
+	public HttpMethod deployApp(String customerName, String appName)
+	{
 		PutMethod request = new PutMethod(this.yambasBase + "customers/" + customerName + "/apps/" + appName);
 		setAuthorizationHeader(request);
 		request.setRequestHeader("ContentType", "application/json");
 		request.setRequestHeader("x-apiomat-system", this.system.toString());
-		try {
-			StringRequestEntity requestEntity = new StringRequestEntity("{\"applicationStatus\":{\"" + this.system
-					+ "\":\"ACTIVE\"}, \"applicationName\":\"" + appName + "\"}", "application/json", "UTF-8");
+		try
+		{
+			StringRequestEntity requestEntity = new StringRequestEntity(
+				"{\"applicationStatus\":{\"" + this.system + "\":\"ACTIVE\"}, \"applicationName\":\"" + appName + "\"}",
+				"application/json", "UTF-8");
 			request.setRequestEntity(requestEntity);
 
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -371,19 +412,24 @@ public class AomHttpClient {
 	 * @param value
 	 * @return
 	 */
-	public HttpMethod updateConfig(String customerName, String appName, String moduleName, String key, String value) {
+	public HttpMethod updateConfig(String customerName, String appName, String moduleName, String key, String value)
+	{
 		PutMethod request = new PutMethod(this.yambasBase + "customers/" + customerName + "/apps/" + appName);
 		setAuthorizationHeader(request);
 		request.setRequestHeader("ContentType", "application/json");
 		request.setRequestHeader("x-apiomat-system", this.system.toString());
-		try {
-			StringRequestEntity requestEntity = new StringRequestEntity("{\"configuration\":" + "	{\""
-					+ this.system.toString().toLowerCase() + "Config\": {\"" + moduleName + "\":{\"" + key + "\":\""
-					+ value + "\"}}}, \"applicationName\":\"" + appName + "\"}", "application/json", "UTF-8");
+		try
+		{
+			StringRequestEntity requestEntity = new StringRequestEntity(
+				"{\"configuration\":" + "	{\"" + this.system.toString().toLowerCase() + "Config\": {\"" + moduleName
+					+ "\":{\"" + key + "\":\"" + value + "\"}}}, \"applicationName\":\"" + appName + "\"}",
+				"application/json", "UTF-8");
 			request.setRequestEntity(requestEntity);
 
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -394,7 +440,8 @@ public class AomHttpClient {
 	 *
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod getApp() {
+	public HttpMethod getApp()
+	{
 		return getApp(this.customerName, this.appName, this.system);
 	}
 
@@ -410,17 +457,21 @@ public class AomHttpClient {
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
 	@SuppressWarnings("unchecked")
-	public HttpMethod getApp(String customerName, String appName, AOMSystem system) {
+	public HttpMethod getApp(String customerName, String appName, AOMSystem system)
+	{
 		GetMethod request = new GetMethod(this.yambasBase + "customers/" + customerName + "/apps/" + appName);
 		setAuthorizationHeader(request);
-		try {
+		try
+		{
 			this.client.executeMethod(request);
 			final JSONObject json = new JSONObject(AomHelper.getStringFromStream(request.getResponseBodyAsStream()));
 			final JSONObject keysObj = json.getJSONObject("apiKeys");
 
 			this.apiKey = keysObj.getString(system.toString().toLowerCase() + "ApiKey");
 
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -431,7 +482,8 @@ public class AomHttpClient {
 	 *
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod deleteApp() {
+	public HttpMethod deleteApp()
+	{
 		return deleteApp(this.customerName, this.appName);
 	}
 
@@ -444,12 +496,16 @@ public class AomHttpClient {
 	 *            the name of the app to delete
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod deleteApp(String customerName, String appName) {
+	public HttpMethod deleteApp(String customerName, String appName)
+	{
 		DeleteMethod request = new DeleteMethod(this.yambasBase + "customers/" + customerName + "/apps/" + appName);
 		setAuthorizationHeader(request);
-		try {
+		try
+		{
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -460,12 +516,16 @@ public class AomHttpClient {
 	 *
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod dropData() {
+	public HttpMethod dropData()
+	{
 		DeleteMethod request = new DeleteMethod(this.yambasBase + "apps/" + this.appName + "/models");
 		setAuthorizationHeader(request);
-		try {
+		try
+		{
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -475,8 +535,7 @@ public class AomHttpClient {
 	 * creates an object of the given dataModelName and moduleName <br/>
 	 * the appname which is set in this object will be used<br/>
 	 *
-	 * This method is deprecated, use
-	 * {@link #createObject(String, String, JSONObject)} instead
+	 * This method is deprecated, use {@link #createObject(String, String, JSONObject)} instead
 	 *
 	 * @param moduleName
 	 *            the modulenname
@@ -487,22 +546,25 @@ public class AomHttpClient {
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
 	@Deprecated
-	public HttpMethod createObject(String moduleName, String dataModelName, NameValuePair... otherFields) {
+	public HttpMethod createObject(String moduleName, String dataModelName, NameValuePair... otherFields)
+	{
 		final PostMethod request = new PostMethod(
-				this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/" + dataModelName);
+			this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/" + dataModelName);
 		setAuthorizationHeader(request);
 		request.setRequestHeader("ContentType", "application/json");
 		request.setRequestHeader("x-apiomat-apikey", this.apiKey);
 		request.setRequestHeader("x-apiomat-system", this.system.toString());
 		request.setRequestHeader("x-apiomat-sdkVersion", "1.0");
-		try {
+		try
+		{
 			StringBuilder sb = new StringBuilder();
 			sb.append("{ \"@type\":\"");
 			sb.append(moduleName);
 			sb.append('$');
 			sb.append(dataModelName);
 			sb.append("\",");
-			for (NameValuePair nvp : otherFields) {
+			for (NameValuePair nvp : otherFields)
+			{
 				sb.append('"').append(nvp.getName()).append("\":\"").append(nvp.getValue()).append("\",");
 			}
 			sb.delete(sb.length() - 1, sb.length());
@@ -512,7 +574,9 @@ public class AomHttpClient {
 			request.setRequestEntity(requestEntity);
 
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -527,27 +591,30 @@ public class AomHttpClient {
 	 * @param dataModelName
 	 *            the name of the datamodels
 	 * @param otherFieldsObject
-	 *            the other fields to set as JSONObject (the @type field will be
-	 *            added automatically)
+	 *            the other fields to set as JSONObject (the @type field will be added automatically)
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod createObject(String moduleName, String dataModelName, JSONObject otherFieldsObject) {
+	public HttpMethod createObject(String moduleName, String dataModelName, JSONObject otherFieldsObject)
+	{
 		final PostMethod request = new PostMethod(
-				this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/" + dataModelName);
+			this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/" + dataModelName);
 		setAuthorizationHeader(request);
 		request.setRequestHeader("ContentType", "application/json");
 		request.setRequestHeader("x-apiomat-apikey", this.apiKey);
 		request.setRequestHeader("x-apiomat-system", this.system.toString());
 		request.setRequestHeader("x-apiomat-sdkVersion", "1.0");
-		try {
+		try
+		{
 
 			otherFieldsObject.put("@type", moduleName + '$' + dataModelName);
 			StringRequestEntity requestEntity = new StringRequestEntity(otherFieldsObject.toString(),
-					"application/json", "UTF-8");
+				"application/json", "UTF-8");
 			request.setRequestEntity(requestEntity);
 			System.out.println(otherFieldsObject.toString());
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -561,17 +628,21 @@ public class AomHttpClient {
 	 * @param dataModelId
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod getObject(String moduleName, String dataModelName, String dataModelId) {
+	public HttpMethod getObject(String moduleName, String dataModelName, String dataModelId)
+	{
 		GetMethod request = new GetMethod(this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/"
-				+ dataModelName + "/" + dataModelId);
+			+ dataModelName + "/" + dataModelId);
 		setAuthorizationHeader(request);
 		request.setRequestHeader("ContentType", "application/json");
 		request.setRequestHeader("x-apiomat-apikey", this.apiKey);
 		request.setRequestHeader("x-apiomat-system", this.system.toString());
 		request.setRequestHeader("x-apiomat-sdkVersion", "1.0");
-		try {
+		try
+		{
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -585,17 +656,21 @@ public class AomHttpClient {
 	 * @param query
 	 * @return
 	 */
-	public HttpMethod getObjects(String moduleName, String dataModelName, String query) {
-		GetMethod request = new GetMethod(this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/"
-				+ dataModelName + "?q=" + query);
+	public HttpMethod getObjects(String moduleName, String dataModelName, String query)
+	{
+		GetMethod request = new GetMethod(
+			this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/" + dataModelName + "?q=" + query);
 		setAuthorizationHeader(request);
 		request.setRequestHeader("ContentType", "application/json");
 		request.setRequestHeader("x-apiomat-apikey", this.apiKey);
 		request.setRequestHeader("x-apiomat-system", this.system.toString());
 		request.setRequestHeader("x-apiomat-sdkVersion", "1.0");
-		try {
+		try
+		{
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -612,38 +687,42 @@ public class AomHttpClient {
 	 * @param dataModelId
 	 *            the id of the datamodel
 	 * @param fullUpdate
-	 *            indicates whether the fullupdate flag should be set to true or
-	 *            false
+	 *            indicates whether the fullupdate flag should be set to true or false
 	 * @param otherFields
 	 *            the other fields to set as NameValuePairs
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
 	public HttpMethod updateObject(String moduleName, String dataModelName, String dataModelId, boolean fullUpdate,
-			NameValuePair... otherFields) {
+		NameValuePair... otherFields)
+	{
 		PutMethod request = new PutMethod(this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + '/'
-				+ dataModelName + '/' + dataModelId);
+			+ dataModelName + '/' + dataModelId);
 		setAuthorizationHeader(request);
 		request.setRequestHeader("ContentType", "application/json");
 		request.setRequestHeader("x-apiomat-apikey", this.apiKey);
 		request.setRequestHeader("x-apiomat-system", this.system.toString());
 		request.setRequestHeader("x-apiomat-sdkVersion", "1.0");
 		request.setRequestHeader("X-apiomat-fullupdate", String.valueOf(fullUpdate));
-		try {
+		try
+		{
 			StringBuilder sb = new StringBuilder();
 			sb.append("{ \"@type\":\"");
 			sb.append(moduleName);
 			sb.append('$');
 			sb.append(dataModelName);
 			sb.append("\",");
-			for (NameValuePair nvp : otherFields) {
+			for (NameValuePair nvp : otherFields)
+			{
 				sb.append("\"");
 				sb.append(nvp.getName());
 				sb.append("\":");
-				if (nvp.getValue().startsWith("[") == false) {
+				if (nvp.getValue().startsWith("[") == false)
+				{
 					sb.append("\"");
 				}
 				sb.append(nvp.getValue());
-				if (nvp.getValue().startsWith("[") == false) {
+				if (nvp.getValue().startsWith("[") == false)
+				{
 					sb.append("\"");
 				}
 				sb.append(",");
@@ -655,7 +734,9 @@ public class AomHttpClient {
 			request.setRequestEntity(requestEntity);
 
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -675,8 +756,8 @@ public class AomHttpClient {
 	 * @param refId
 	 *            the reference id
 	 * @param isTransientRef
-	 *            indicates whether the referenced class is transient or not
-	 *            (needed to specify whether to set foreignId or id
+	 *            indicates whether the referenced class is transient or not (needed to specify whether to set foreignId
+	 *            or id
 	 * @param refClassModule
 	 *            the module name of the referenced class
 	 * @param refClassName
@@ -684,21 +765,25 @@ public class AomHttpClient {
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
 	public HttpMethod addReference(String moduleName, String dataModelName, String dataModelId, String attributeName,
-			String refId, boolean isTransientRef, String refClassModule, String refClassName) {
+		String refId, boolean isTransientRef, String refClassModule, String refClassName)
+	{
 		PostMethod request = new PostMethod(this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/"
-				+ dataModelName + "/" + dataModelId + "/" + attributeName);
+			+ dataModelName + "/" + dataModelId + "/" + attributeName);
 		setAuthorizationHeader(request);
 		request.setRequestHeader("ContentType", "application/json");
 		request.setRequestHeader("x-apiomat-apikey", this.apiKey);
 		request.setRequestHeader("x-apiomat-system", this.system.toString());
-		try {
+		try
+		{
 			String data = "{ \"@type\":\"" + refClassModule + "$" + refClassName + "\",\""
-					+ (isTransientRef ? "foreignId" : "id") + "\":\"" + refId + "\"}";
+				+ (isTransientRef ? "foreignId" : "id") + "\":\"" + refId + "\"}";
 			StringRequestEntity requestEntity = new StringRequestEntity(data, "application/json", "UTF-8");
 			request.setRequestEntity(requestEntity);
 
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -713,17 +798,20 @@ public class AomHttpClient {
 	 * @param refAttributeName
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod getReference(String moduleName, String dataModelName, String dataModelId,
-			String refAttributeName) {
+	public HttpMethod getReference(String moduleName, String dataModelName, String dataModelId, String refAttributeName)
+	{
 		GetMethod request = new GetMethod(this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/"
-				+ dataModelName + "/" + dataModelId + "/" + refAttributeName);
+			+ dataModelName + "/" + dataModelId + "/" + refAttributeName);
 		setAuthorizationHeader(request);
 		request.setRequestHeader("ContentType", "application/json");
 		request.setRequestHeader("x-apiomat-apikey", this.apiKey);
 		request.setRequestHeader("x-apiomat-system", this.system.toString());
-		try {
+		try
+		{
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -745,16 +833,20 @@ public class AomHttpClient {
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
 	public HttpMethod deleteReference(String moduleName, String dataModelName, String dataModelId,
-			String refAttributeName, String refId) {
+		String refAttributeName, String refId)
+	{
 		DeleteMethod request = new DeleteMethod(this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/"
-				+ dataModelName + "/" + dataModelId + "/" + refAttributeName + "/" + refId);
+			+ dataModelName + "/" + dataModelId + "/" + refAttributeName + "/" + refId);
 		setAuthorizationHeader(request);
 		request.setRequestHeader("ContentType", "application/json");
 		request.setRequestHeader("x-apiomat-apikey", this.apiKey);
 		request.setRequestHeader("x-apiomat-system", this.system.toString());
-		try {
+		try
+		{
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -775,52 +867,59 @@ public class AomHttpClient {
 	 *            the reference id
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod deleteObject(String moduleName, String dataModelName, String dataModelId) {
+	public HttpMethod deleteObject(String moduleName, String dataModelName, String dataModelId)
+	{
 		DeleteMethod request = new DeleteMethod(this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/"
-				+ dataModelName + "/" + dataModelId);
+			+ dataModelName + "/" + dataModelId);
 		setAuthorizationHeader(request);
 		request.setRequestHeader("ContentType", "application/json");
 		request.setRequestHeader("x-apiomat-apikey", this.apiKey);
 		request.setRequestHeader("x-apiomat-system", this.system.toString());
-		try {
+		try
+		{
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
 	}
 
 	/**
-	 * Sends a request to yambas base URL + path. yambas base URL is: yambasHost
-	 * + "/yambas/rest/"
+	 * Sends a request to yambas base URL + path. yambas base URL is: yambasHost + "/yambas/rest/"
 	 *
 	 * @param path
 	 *            the path
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod getRequestRestEndpoint(String path) {
+	public HttpMethod getRequestRestEndpoint(String path)
+	{
 		GetMethod request = new GetMethod(this.yambasBase + path);
 		setAuthorizationHeader(request);
 		request.setRequestHeader("ContentType", "application/json");
 		request.setRequestHeader("x-apiomat-apikey", getApiKey());
 		request.setRequestHeader("x-apiomat-system", getSystem().toString());
-		try {
+		try
+		{
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
 	}
 
 	/**
-	 * Sends a request to yambas base URL + path. yambas base URL is: yambasHost
-	 * + "/yambas/rest/"
+	 * Sends a request to yambas base URL + path. yambas base URL is: yambasHost + "/yambas/rest/"
 	 *
 	 * @param path
 	 *            the path
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod postRequestRestEndpoint(String path, InputStream payLoad) {
+	public HttpMethod postRequestRestEndpoint(String path, InputStream payLoad)
+	{
 		String url = this.yambasBase + path;
 		PostMethod request = new PostMethod(url);
 
@@ -830,9 +929,12 @@ public class AomHttpClient {
 		request.setRequestHeader("x-apiomat-system", getSystem().toString());
 
 		request.setRequestEntity(new InputStreamRequestEntity(payLoad));
-		try {
+		try
+		{
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -843,36 +945,43 @@ public class AomHttpClient {
 	 *
 	 * @return Token map containing an OAuth2 access token and other info
 	 */
-	public String getOauth2Token() {
+	public String getOauth2Token()
+	{
 		PostMethod request = new PostMethod(this.yambasHost + "/yambas/oauth/token");
 		NameValuePair[] data = { new NameValuePair("grant_type", "aom_user"),
-				new NameValuePair("client_id", this.getAppName()), new NameValuePair("client_secret", this.getApiKey()),
-				new NameValuePair("scope", "read write"), new NameValuePair("username", this.getUserName()),
-				new NameValuePair("app", this.getAppName()), new NameValuePair("password", this.getPassword()),
-				new NameValuePair("system", this.getSystem().toString()) };
+			new NameValuePair("client_id", this.getAppName()), new NameValuePair("client_secret", this.getApiKey()),
+			new NameValuePair("scope", "read write"), new NameValuePair("username", this.getUserName()),
+			new NameValuePair("app", this.getAppName()), new NameValuePair("password", this.getPassword()),
+			new NameValuePair("system", this.getSystem().toString()) };
 		request.setRequestBody(data);
-		try {
+		try
+		{
 			this.client.executeMethod(request);
 			return request.getResponseBodyAsString();
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return null;
 	}
 
 	/**
-	 * Revoke an OAuth2 token. Requires this client to be configured with a
-	 * valid access token.
+	 * Revoke an OAuth2 token. Requires this client to be configured with a valid access token.
 	 *
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod revokeOAuth2Token() {
+	public HttpMethod revokeOAuth2Token()
+	{
 		PostMethod request = new PostMethod(this.yambasHost + "/yambas/oauth/users/revoke");
 		setAuthorizationHeader(request);
 		request.setRequestHeader("x-apiomat-apikey", getApiKey());
-		try {
+		try
+		{
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return null;
@@ -884,16 +993,20 @@ public class AomHttpClient {
 	 * @param refreshToken
 	 * @return Token map containing an OAuth2 access token and other info
 	 */
-	public String refreshOauth2Token(String refreshToken) {
+	public String refreshOauth2Token(String refreshToken)
+	{
 		PostMethod request = new PostMethod(this.yambasHost + "/yambas/oauth/token");
 		NameValuePair[] data = { new NameValuePair("grant_type", "refresh_token"),
-				new NameValuePair("client_id", this.getAppName()), new NameValuePair("client_secret", this.getApiKey()),
-				new NameValuePair("refresh_token", refreshToken) };
+			new NameValuePair("client_id", this.getAppName()), new NameValuePair("client_secret", this.getApiKey()),
+			new NameValuePair("refresh_token", refreshToken) };
 		request.setRequestBody(data);
-		try {
+		try
+		{
 			this.client.executeMethod(request);
 			return request.getResponseBodyAsString();
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return null;
@@ -904,16 +1017,21 @@ public class AomHttpClient {
 	 *
 	 * @return the authentication header value
 	 */
-	public String getAuthenticationHeaderBasic() {
-		if (getUserName() == null || getPassword() == null) {
+	public String getAuthenticationHeaderBasic()
+	{
+		if (getUserName() == null || getPassword() == null)
+		{
 			return null;
 		}
 
-		try {
+		try
+		{
 			String credentials = getUserName() + ":" + getPassword();
 			String encoded = new String(Base64.encodeBase64(credentials.getBytes("UTF-8")), "UTF-8");
 			return "Basic " + encoded;
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			System.out.println(e);
 		}
 		return null;
@@ -924,8 +1042,10 @@ public class AomHttpClient {
 	 *
 	 * @return authentication header with OAuth2 token
 	 */
-	public String getAuthenticationHeaderBearer() {
-		if (getAccessToken() == null) {
+	public String getAuthenticationHeaderBearer()
+	{
+		if (getAccessToken() == null)
+		{
 			return null;
 		}
 
@@ -940,7 +1060,8 @@ public class AomHttpClient {
 	 *            the AppName
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod exportAppDataToCSV(final String appName) {
+	public HttpMethod exportAppDataToCSV(final String appName)
+	{
 		return getRequestRestEndpoint("modules/csv/spec/" + appName);
 	}
 
@@ -954,16 +1075,20 @@ public class AomHttpClient {
 	 *
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod importCSVToApp(String appName, byte[] buf) {
+	public HttpMethod importCSVToApp(String appName, byte[] buf)
+	{
 		PostMethod request = new PostMethod(this.yambasBase + "modules/csv/spec/" + appName);
 		setAuthorizationHeader(request);
 		request.setRequestHeader("x-apiomat-system", this.system.toString());
 		request.setRequestHeader("Content-Type", "application/octet-stream");
 		request.setRequestHeader("X-apiomat-apikey", this.apiKey);
 		request.setRequestEntity(new ByteArrayRequestEntity(buf));
-		try {
+		try
+		{
 			this.client.executeMethod(request);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		return request;
@@ -974,19 +1099,24 @@ public class AomHttpClient {
 	 * @param targetPath
 	 * @return number of files having been unzipped
 	 */
-	public static long unzip(final byte[] data, final String targetPath) {
+	public static long unzip(final byte[] data, final String targetPath)
+	{
 		final InputStream input = new ByteArrayInputStream(data);
 		final byte[] buffer = new byte[1024];
 		final ZipInputStream zip = new ZipInputStream(input);
 		long unzippedFiles = 0;
-		try {
+		try
+		{
 			int len = 0;
 			ZipEntry e = zip.getNextEntry();
 
-			while (e != null) {
-				if (!e.isDirectory()) {
+			while (e != null)
+			{
+				if (!e.isDirectory())
+				{
 					final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					while ((len = zip.read(buffer)) != -1) {
+					while ((len = zip.read(buffer)) != -1)
+					{
 						baos.write(buffer, 0, len);
 					}
 					baos.close();
@@ -999,7 +1129,9 @@ public class AomHttpClient {
 				e = zip.getNextEntry();
 			}
 			zip.close();
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			Assert.fail();
 		}
 		return unzippedFiles;
@@ -1015,7 +1147,8 @@ public class AomHttpClient {
 	 * @return the {@link HttpMethod} object after executing the request
 	 * @throws IOException
 	 */
-	public HttpMethod downloadNM(final String moduleName, final String targetPath) throws IOException {
+	public HttpMethod downloadNM(final String moduleName, final String targetPath) throws IOException
+	{
 		HttpMethod response = getRequestRestEndpoint("modules/" + moduleName + "/sdk");
 		unzip(response.getResponseBody(), targetPath);
 		return response;
@@ -1029,31 +1162,33 @@ public class AomHttpClient {
 	 * @return success-string
 	 * @throws Exception
 	 */
-	public String runAnttask(final String target, final String path, final String userPassword) throws Exception {
+	public String runAnttask(final String target, final String path, final String userPassword) throws Exception
+	{
 		String result = "";
 		final Process process;
-		try {
+		try
+		{
 			/* set system in properties file and upload */
 			final Properties sdkProp = new Properties();
 			sdkProp.load(new FileInputStream(new File(path + "/sdk.properties")));
 			sdkProp.setProperty("password", userPassword);
 			sdkProp.store(new FileOutputStream(new File(path + "/sdk.properties")), null);
 			String antBin = "ant";
-			if (System.getenv("ANT_BIN") != null) {
+			if (System.getenv("ANT_BIN") != null)
+			{
 				antBin = System.getenv("ANT_BIN");
 			}
 
 			/*
-			 * if running this test on a local windows-system, set the ANT_BIN
-			 * env var.
+			 * if running this test on a local windows-system, set the ANT_BIN env var.
 			 */
 			final ProcessBuilder pb = new ProcessBuilder(antBin, "-Dant.build.javac.target=1.8",
-					"-Dant.build.javac.source=1.8", "-f", "build.xml", target);
-			if (pb.environment().containsKey("JAVA_HOME") == false) {
+				"-Dant.build.javac.source=1.8", "-f", "build.xml", target);
+			if (pb.environment().containsKey("JAVA_HOME") == false)
+			{
 				/*
-				 * For executing the testJava8 test, we sometimes need to set
-				 * the java home to a java 8 JDK; if necessary, extend this on
-				 * windows systems
+				 * For executing the testJava8 test, we sometimes need to set the java home to a java 8 JDK; if
+				 * necessary, extend this on windows systems
 				 */
 				pb.environment().put("JAVA_HOME", "/opt/jdk");
 			}
@@ -1067,19 +1202,23 @@ public class AomHttpClient {
 			String line;
 			boolean successfull = false;
 			boolean isNextResultLine = false;
-			while ((line = br.readLine()) != null) {
+			while ((line = br.readLine()) != null)
+			{
 				System.out.println(line);
-				if (isNextResultLine) { /*
-										 * store the line after "BUILD FAILED"
-										 * to get the correct error message
-										 */
+				if (isNextResultLine)
+				{ /*
+					 * store the line after "BUILD FAILED" to get the correct error message
+					 */
 					result = line;
 					isNextResultLine = false;
 				}
-				if (line.contains("BUILD SUCCESSFUL")) {
+				if (line.contains("BUILD SUCCESSFUL"))
+				{
 					successfull = true;
 					result = line;
-				} else if (line.contains("BUILD FAILED")) {
+				}
+				else if (line.contains("BUILD FAILED"))
+				{
 					isNextResultLine = true;
 				}
 
@@ -1087,7 +1226,9 @@ public class AomHttpClient {
 			assertTrue(successfull);
 			br.close();
 
-		} catch (final Exception e) {
+		}
+		catch (final Exception e)
+		{
 			e.printStackTrace();
 			Assert.fail();
 		}
@@ -1095,15 +1236,18 @@ public class AomHttpClient {
 		return result;
 	}
 
-	private void setAuthorizationHeader(HttpMethodBase requestMethod) {
+	private void setAuthorizationHeader(HttpMethodBase requestMethod)
+	{
 		/* First try basic auth */
 		String authHeader = getAuthenticationHeaderBasic();
 		/* If null, try Oauth */
-		if (authHeader == null) {
+		if (authHeader == null)
+		{
 			authHeader = getAuthenticationHeaderBearer();
 		}
 		/* Set header if not null, otherwise don't set header */
-		if (authHeader != null) {
+		if (authHeader != null)
+		{
 			requestMethod.setRequestHeader("Authorization", authHeader);
 		}
 	}
