@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -305,6 +306,42 @@ public class AomHttpClient
 			new NameValuePair( "moduleName", moduleName ),
 		};
 		request.setRequestBody( data );
+		try
+		{
+			this.client.executeMethod( request );
+		}
+		catch ( IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return request;
+	}
+
+	/**
+	 * adds the module to the app
+	 *
+	 * @param customerName the name of the customer which owns the app
+	 * @param appName the name of the app
+	 * @param moduleName the name of the module to add
+	 * @param className
+	 * @return the {@link HttpMethod} object after executing the request
+	 * @throws UnsupportedEncodingException
+	 */
+	public HttpMethod addAuthModuleToApp( String customerName, String appName, String moduleName, String className )
+		throws UnsupportedEncodingException
+	{
+		final PutMethod request =
+			new PutMethod( this.yambasBase + "customers/" + customerName + "/apps/" + appName );
+		setAuthorizationHeader( request );
+		request.setRequestHeader( "x-apiomat-system", this.system.toString( ) );
+
+		final String data =
+			"{ \"authClassesMap\" : { \"" + this.system.toString( ) + "\": { \"1\":\"Basics$User\", \"2\": \"" +
+				moduleName + "$" + className +
+				"\"}}}";
+		final StringRequestEntity requestEntity = new StringRequestEntity( data, "application/json", "UTF-8" );
+		request.setRequestEntity( requestEntity );
+
 		try
 		{
 			this.client.executeMethod( request );
@@ -1022,8 +1059,8 @@ public class AomHttpClient
 	}
 
 	/**
-	 * Dumps an app´s data to csv-format
-	 * 
+	 * Dumps an appï¿½s data to csv-format
+	 *
 	 * @param appName the AppName
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
@@ -1034,7 +1071,7 @@ public class AomHttpClient
 
 	/**
 	 * imports a CSV-dump into an existing app
-	 * 
+	 *
 	 * @param appName - the Appname
 	 * @param buf - byte-Array-buffer of CSV-zip
 	 *
@@ -1059,7 +1096,6 @@ public class AomHttpClient
 		}
 		return request;
 	}
-
 
 	/**
 	 * @param data
@@ -1106,7 +1142,7 @@ public class AomHttpClient
 
 	/**
 	 * Downloads a module and unzips it to path
-	 * 
+	 *
 	 * @param moduleName - name of the Module
 	 * @param targetPath - extract path
 	 * @return the {@link HttpMethod} object after executing the request
@@ -1193,7 +1229,6 @@ public class AomHttpClient
 
 		return result;
 	}
-
 
 	private void setAuthorizationHeader( HttpMethodBase requestMethod )
 	{
