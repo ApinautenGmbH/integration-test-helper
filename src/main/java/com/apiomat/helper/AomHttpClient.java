@@ -22,9 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -40,10 +37,8 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 import org.junit.Assert;
 
@@ -692,13 +687,14 @@ public class AomHttpClient
 	 *
 	 * @param moduleName
 	 * @param dataModelName
-	 * @param query
+	 * @param query, may be null to append no query
 	 * @return
 	 */
 	public HttpMethod getObjects( String moduleName, String dataModelName, String query )
 	{
 		GetMethod request = new GetMethod(
-			this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/" + dataModelName + "?q=" + query );
+			this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/" + dataModelName +
+				( query == null ? "" : "?q=" + query ) );
 		setAuthorizationHeader( request );
 		request.setRequestHeader( "ContentType", "application/json" );
 		request.setRequestHeader( "x-apiomat-apikey", this.apiKey );
@@ -815,7 +811,7 @@ public class AomHttpClient
 		try
 		{
 			String data = "{ \"@type\":\"" + refClassModule + "$" + refClassName + "\",\"" +
-					( isTransientRef ? "foreignId" : "id" ) + "\":\"" + refId + "\"}";
+				( isTransientRef ? "foreignId" : "id" ) + "\":\"" + refId + "\"}";
 			StringRequestEntity requestEntity = new StringRequestEntity( data, "application/json", "UTF-8" );
 			request.setRequestEntity( requestEntity );
 
