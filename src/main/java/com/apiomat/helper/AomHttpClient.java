@@ -22,9 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -40,10 +37,8 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 import org.junit.Assert;
 
@@ -473,6 +468,25 @@ public class AomHttpClient
 		return request;
 	}
 
+	@SuppressWarnings( "unchecked" )
+	public String getVersion( )
+	{
+		GetMethod request = new GetMethod( this.yambasBase );
+		try
+		{
+			request.setRequestHeader( "Accept", "application/json" );
+			this.client.executeMethod( request );
+			final JSONObject json =
+				new JSONObject( AomHelper.getStringFromStream( request.getResponseBodyAsStream( ) ) );
+			return json.getString( "version" );
+		}
+		catch ( IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return null;
+	}
+
 	/**
 	 * requests to get the app
 	 *
@@ -815,7 +829,7 @@ public class AomHttpClient
 		try
 		{
 			String data = "{ \"@type\":\"" + refClassModule + "$" + refClassName + "\",\"" +
-					( isTransientRef ? "foreignId" : "id" ) + "\":\"" + refId + "\"}";
+				( isTransientRef ? "foreignId" : "id" ) + "\":\"" + refId + "\"}";
 			StringRequestEntity requestEntity = new StringRequestEntity( data, "application/json", "UTF-8" );
 			request.setRequestEntity( requestEntity );
 
@@ -931,13 +945,21 @@ public class AomHttpClient
 	 *
 	 * @param path
 	 *        the path
+	 * @param contentTypes content types ("application/json" used if not provided)
 	 * @return the {@link HttpMethod} object after executing the request
 	 */
-	public HttpMethod getRequestRestEndpoint( String path )
+	public HttpMethod getRequestRestEndpoint( String path, String... contentTypes )
 	{
 		GetMethod request = new GetMethod( this.yambasBase + path );
 		setAuthorizationHeader( request );
-		request.setRequestHeader( "ContentType", "application/json" );
+		if ( contentTypes.length == 0 )
+		{
+			request.setRequestHeader( "ContentType", "application/json" );
+		}
+		else
+		{
+			request.setRequestHeader( "ContentType", String.join( ",", contentTypes ) );
+		}
 		request.setRequestHeader( "x-apiomat-apikey", getApiKey( ) );
 		request.setRequestHeader( "x-apiomat-system", getSystem( ).toString( ) );
 		try
