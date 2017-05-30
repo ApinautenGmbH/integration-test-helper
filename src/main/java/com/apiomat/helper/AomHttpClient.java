@@ -706,13 +706,14 @@ public class AomHttpClient
 	 *
 	 * @param moduleName
 	 * @param dataModelName
-	 * @param query
+	 * @param query, may be null to append no query
 	 * @return
 	 */
 	public HttpMethod getObjects( String moduleName, String dataModelName, String query )
 	{
 		GetMethod request = new GetMethod(
-			this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/" + dataModelName + "?q=" + query );
+			this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/" + dataModelName +
+				( query == null ? "" : "?q=" + query ) );
 		setAuthorizationHeader( request );
 		request.setRequestHeader( "ContentType", "application/json" );
 		request.setRequestHeader( "x-apiomat-apikey", this.apiKey );
