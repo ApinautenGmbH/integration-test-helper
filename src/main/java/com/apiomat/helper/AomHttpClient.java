@@ -239,6 +239,27 @@ public class AomHttpClient
 		}
 		return request;
 	}
+	
+	/**
+	 * deletes the customer and sets customerName to null ({@link #getCustomerName()})
+	 * @param customerName
+	 * @return the statuscode
+	 */
+	public HttpMethod deleteCustomer( String customerName )
+	{
+		DeleteMethod request = new DeleteMethod( this.yambasBase + "customers/" + customerName );
+		setAuthorizationHeader( request );
+		try
+		{
+			this.client.executeMethod( request );
+			this.customerName = null;
+		}
+		catch ( IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return request;
+	}
 
 	/**
 	 * creates the app for the currently set customer
@@ -308,6 +329,32 @@ public class AomHttpClient
 		request.setRequestHeader( "x-apiomat-system", this.system.toString( ) );
 		NameValuePair[ ] data = { new NameValuePair( "moduleName", moduleName ), };
 		request.setRequestBody( data );
+		try
+		{
+			this.client.executeMethod( request );
+		}
+		catch ( IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return request;
+	}
+	
+	/**
+	 * deletes a module
+	 *
+	 * @param moduleName
+	 *        the name of the module to delete
+	 * @param deleteCompletely
+	 *        if set to false, the module is only deleted from the current system and wil still exist in database
+	 * @return the {@link HttpMethod} object after executing the request
+	 */
+	public HttpMethod deleteModule( String moduleName, boolean deleteCompletely )
+	{
+		DeleteMethod request = new DeleteMethod(
+			this.yambasBase + "modules/" + moduleName + "?deleteCompletely=" + String.valueOf(deleteCompletely) );
+		setAuthorizationHeader( request );
+		request.setRequestHeader( "x-apiomat-system", this.system.toString( ) );
 		try
 		{
 			this.client.executeMethod( request );
