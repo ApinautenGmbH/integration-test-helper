@@ -239,9 +239,10 @@ public class AomHttpClient
 		}
 		return request;
 	}
-	
+
 	/**
 	 * deletes the customer and sets customerName to null ({@link #getCustomerName()})
+	 *
 	 * @param customerName
 	 * @return the statuscode
 	 */
@@ -339,7 +340,7 @@ public class AomHttpClient
 		}
 		return request;
 	}
-	
+
 	/**
 	 * deletes a module
 	 *
@@ -352,7 +353,7 @@ public class AomHttpClient
 	public HttpMethod deleteModule( String moduleName, boolean deleteCompletely )
 	{
 		DeleteMethod request = new DeleteMethod(
-			this.yambasBase + "modules/" + moduleName + "?deleteCompletely=" + String.valueOf(deleteCompletely) );
+			this.yambasBase + "modules/" + moduleName + "?deleteCompletely=" + String.valueOf( deleteCompletely ) );
 		setAuthorizationHeader( request );
 		request.setRequestHeader( "x-apiomat-system", this.system.toString( ) );
 		try
@@ -844,6 +845,51 @@ public class AomHttpClient
 	}
 
 	/**
+	 * updates an object of the given dataModelName and moduleName <br/>
+	 * the appname which is set in this object will be used
+	 *
+	 * @param moduleName
+	 *        the modulenname
+	 * @param dataModelName
+	 *        the name of the datamodels
+	 * @param dataModelId
+	 *        the id of the datamodel
+	 * @param fullUpdate
+	 *        indicates whether the fullupdate flag should be set to true or false
+	 * @param otherFields
+	 *        the other fields to set as NameValuePairs
+	 * @return the {@link HttpMethod} object after executing the request
+	 */
+	public HttpMethod updateObject( String moduleName, String dataModelName, String dataModelId, boolean fullUpdate,
+		JSONObject objectToUpdate )
+	{
+		final PutMethod request =
+			new PutMethod( this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + '/' +
+				dataModelName + '/' + dataModelId );
+		setAuthorizationHeader( request );
+		request.setRequestHeader( "ContentType", "application/json" );
+		request.setRequestHeader( "x-apiomat-apikey", this.apiKey );
+		request.setRequestHeader( "x-apiomat-system", this.system.toString( ) );
+		request.setRequestHeader( "x-apiomat-sdkVersion", "1.0" );
+		request.setRequestHeader( "X-apiomat-fullupdate", String.valueOf( fullUpdate ) );
+		objectToUpdate.put( "@type", moduleName + "$" + dataModelName );
+
+		try
+		{
+			final StringRequestEntity requestEntity =
+				new StringRequestEntity( objectToUpdate.toString( ), "application/json", "UTF-8" );
+			request.setRequestEntity( requestEntity );
+
+			this.client.executeMethod( request );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return request;
+	}
+
+	/**
 	 * adds a reference
 	 *
 	 * @param moduleName
@@ -982,6 +1028,32 @@ public class AomHttpClient
 			this.client.executeMethod( request );
 		}
 		catch ( IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return request;
+	}
+
+	/**
+	 * posts static data, either as image or as file
+	 *
+	 * @param content the content
+	 * @param isImage indicates whether this is an image or a file
+	 * @return the {@link HttpMethod} object after executing the request
+	 */
+	public HttpMethod postStaticData( final byte[ ] content, final boolean isImage )
+	{
+		final PostMethod request =
+			new PostMethod( this.yambasBase + "apps/" + this.appName + "/data/" + ( isImage ? "images/" : "files/" ) );
+		request.setRequestEntity( new ByteArrayRequestEntity( content ) );
+		request.setRequestHeader( "Content-Type", "application/octet-stream" );
+		request.setRequestHeader( "x-apiomat-apikey", this.apiKey );
+		request.setRequestHeader( "x-apiomat-system", this.system.toString( ) );
+		try
+		{
+			this.client.executeMethod( request );
+		}
+		catch ( final IOException e )
 		{
 			e.printStackTrace( );
 		}
