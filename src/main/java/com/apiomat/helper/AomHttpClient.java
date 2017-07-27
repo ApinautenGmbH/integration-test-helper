@@ -1059,6 +1059,31 @@ public class AomHttpClient
 		}
 		return request;
 	}
+	
+	/**
+	 * delete static data, either image or file
+	 *
+	 * @param id the file id
+	 * @param isImage indicates whether this is an image or a file
+	 * @return the {@link HttpMethod} object after executing the request
+	 */
+	public HttpMethod deleteStaticData( String id, final boolean isImage )
+	{
+		final DeleteMethod request =
+			new DeleteMethod( this.yambasBase + "apps/" + this.appName + "/data/" + ( isImage ? "images/" : "files/" ) + id );
+		request.setRequestHeader( "Content-Type", "application/octet-stream" );
+		request.setRequestHeader( "x-apiomat-apikey", this.apiKey );
+		request.setRequestHeader( "x-apiomat-system", this.system.toString( ) );
+		try
+		{
+			this.client.executeMethod( request );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return request;
+	}
 
 	/**
 	 * Sends a request to yambas base URL + path. yambas base URL is: yambasHost + "/yambas/rest/"
