@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.util.Properties;
 
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 
@@ -30,6 +31,17 @@ import org.junit.Assert;
  */
 public class AomHelper
 {
+	/**
+	 * Returns the ID from the location header in the HTTP response
+	 *
+	 * @param response
+	 * @return the ID from the location header in the HTTP response
+	 */
+	public static String getIdFromLocationHeader( final HttpMethod response )
+	{
+		final String location = response.getResponseHeader( "Location" ).getValue( );
+		return getIdFromUrl( location );
+	}
 
 	/**
 	 * cuts the id off the url
@@ -53,7 +65,9 @@ public class AomHelper
 	}
 
 	/**
-	 * @param is the inputstream
+	 * Note: Does't reset the stream
+	 *
+	 * @param is the InputStream
 	 * @return the string from id
 	 */
 	public static String getStringFromStream( InputStream is )
