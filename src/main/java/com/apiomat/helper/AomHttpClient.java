@@ -684,6 +684,21 @@ public class AomHttpClient
 	}
 
 	/**
+	 * Creates an object of the given dataModelName and moduleName <br/>
+	 * The app name which is set in this client will be used
+	 *
+	 * @param moduleName
+	 *        the name of the module
+	 * @param dataModelName
+	 *        the name of the class
+	 * @return the {@link HttpMethod} object after executing the request
+	 */
+	public HttpMethod createObject( String moduleName, String dataModelName )
+	{
+		return createObject( moduleName, dataModelName, new JSONObject( ) );
+	}
+
+	/**
 	 * creates an object of the given dataModelName and moduleName <br/>
 	 * the appname which is set in this object will be used
 	 *
