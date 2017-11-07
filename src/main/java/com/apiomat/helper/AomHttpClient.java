@@ -476,7 +476,7 @@ public class AomHttpClient
 	 * @param moduleName the name of the module containing the auth class
 	 * @param className the name of the auth class
 	 * @return request object to check status codes and return values
-	 * @throws UnsupportedEncodingException
+	 * @throws UnsupportedEncodingException exc
 	 */
 	public HttpMethod addAuthModuleToApp( String customerName, String appName, String moduleName, String className )
 		throws UnsupportedEncodingException
@@ -768,7 +768,7 @@ public class AomHttpClient
 	}
 
 	/**
-	 * Creates an object of the given dataModelName and moduleName <br/>
+	 * Creates an object of the given dataModelName and moduleName
 	 * The app name which is set in this client will be used
 	 *
 	 * @param moduleName
@@ -783,7 +783,7 @@ public class AomHttpClient
 	}
 
 	/**
-	 * Creates an object of the given dataModelName and moduleName <br/>
+	 * Creates an object of the given dataModelName and moduleName
 	 * the appname which is set in this object will be used
 	 *
 	 * @param moduleName
@@ -884,7 +884,7 @@ public class AomHttpClient
 	}
 
 	/**
-	 * Updates an object of the given dataModelName and moduleName <br/>
+	 * Updates an object of the given dataModelName and moduleName
 	 * the appname which is set in this object will be used
 	 *
 	 * @param moduleName
@@ -950,7 +950,7 @@ public class AomHttpClient
 	}
 
 	/**
-	 * Updates an object of the given dataModelName and moduleName <br/>
+	 * Updates an object of the given dataModelName and moduleName
 	 * the appname which is set in this object will be used
 	 *
 	 * @param moduleName
@@ -1304,7 +1304,7 @@ public class AomHttpClient
 	 * @param targetPath
 	 *        extract path
 	 * @return request object to check status codes and return values
-	 * @throws IOException
+	 * @throws IOException exc
 	 */
 	public HttpMethod downloadNM( final String moduleName, final String targetPath ) throws IOException
 	{

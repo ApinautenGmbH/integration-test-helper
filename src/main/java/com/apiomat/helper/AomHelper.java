@@ -41,7 +41,7 @@ public class AomHelper
 	/**
 	 * Returns the ID from the location header in the HTTP response
 	 *
-	 * @param response
+	 * @param response response from previous request
 	 * @return the ID from the location header in the HTTP response
 	 */
 	public static String getIdFromLocationHeader( final HttpMethod response )
@@ -98,7 +98,7 @@ public class AomHelper
 	 * @param path - system-path of nm
 	 * @param userPassword - the customers password
 	 * @return success-string
-	 * @throws Exception
+	 * @throws Exception exception
 	 */
 	public static String runAnttask( final String target, final String path, final String userPassword )
 		throws Exception
