@@ -509,31 +509,19 @@ public class AomHttpClient
 	 *
 	 * @param moduleName
 	 *        the name of the module to add
-	 * @param nvps
-	 *        Name/Value pairs to be sent in the update JSON
+	 * @param objectToUpdate
+	 *        JSON containing the key/value pais to use for update
 	 * @return request object to check status codes and return values
 	 */
-	public HttpMethod updateModule( String moduleName, NameValuePair... nvps )
+	public HttpMethod updateModule( String moduleName, JSONObject objectToUpdate )
 	{
 		PutMethod request = new PutMethod( this.yambasBase + "modules/" + moduleName );
 		setAuthorizationHeader( request );
 		request.setRequestHeader( "x-apiomat-system", this.system.toString( ) );
 		try
 		{
-			StringBuilder sb = new StringBuilder( );
-			sb.append( "{" );
-			for ( NameValuePair nvp : nvps )
-			{
-				sb.append( "\"" );
-				sb.append( nvp.getName( ) );
-				sb.append( "\":\"" );
-				sb.append( nvp.getValue( ) );
-				sb.append( "\"," );
-			}
-			sb.delete( sb.length( ) - 1, sb.length( ) );
-			sb.append( "}" );
-
-			StringRequestEntity requestEntity = new StringRequestEntity( sb.toString( ), "application/json", "UTF-8" );
+			final StringRequestEntity requestEntity =
+				new StringRequestEntity( objectToUpdate.toString( ), "application/json", "UTF-8" );
 			request.setRequestEntity( requestEntity );
 
 			this.client.executeMethod( request );
@@ -874,72 +862,6 @@ public class AomHttpClient
 		request.setRequestHeader( "x-apiomat-sdkVersion", "1.0" );
 		try
 		{
-			this.client.executeMethod( request );
-		}
-		catch ( IOException e )
-		{
-			e.printStackTrace( );
-		}
-		return request;
-	}
-
-	/**
-	 * Updates an object of the given dataModelName and moduleName
-	 * the appname which is set in this object will be used
-	 *
-	 * @param moduleName
-	 *        the modulenname
-	 * @param dataModelName
-	 *        the name of the datamodels
-	 * @param dataModelId
-	 *        the id of the datamodel
-	 * @param fullUpdate
-	 *        indicates whether the fullupdate flag should be set to true or false
-	 * @param otherFields
-	 *        the other fields to set as NameValuePairs
-	 * @return request object to check status codes and return values
-	 */
-	public HttpMethod updateObject( String moduleName, String dataModelName, String dataModelId, boolean fullUpdate,
-		NameValuePair... otherFields )
-	{
-		PutMethod request = new PutMethod( this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + '/' +
-			dataModelName + '/' + dataModelId );
-		setAuthorizationHeader( request );
-		request.setRequestHeader( "ContentType", "application/json" );
-		request.setRequestHeader( "x-apiomat-apikey", this.apiKey );
-		request.setRequestHeader( "x-apiomat-system", this.system.toString( ) );
-		request.setRequestHeader( "x-apiomat-sdkVersion", "1.0" );
-		request.setRequestHeader( "X-apiomat-fullupdate", String.valueOf( fullUpdate ) );
-		try
-		{
-			StringBuilder sb = new StringBuilder( );
-			sb.append( "{ \"@type\":\"" );
-			sb.append( moduleName );
-			sb.append( '$' );
-			sb.append( dataModelName );
-			sb.append( "\"," );
-			for ( NameValuePair nvp : otherFields )
-			{
-				sb.append( "\"" );
-				sb.append( nvp.getName( ) );
-				sb.append( "\":" );
-				if ( nvp.getValue( ).startsWith( "[" ) == false )
-				{
-					sb.append( "\"" );
-				}
-				sb.append( nvp.getValue( ) );
-				if ( nvp.getValue( ).startsWith( "[" ) == false )
-				{
-					sb.append( "\"" );
-				}
-				sb.append( "," );
-			}
-			sb.delete( sb.length( ) - 1, sb.length( ) );
-			sb.append( "}" );
-
-			StringRequestEntity requestEntity = new StringRequestEntity( sb.toString( ), "application/json", "UTF-8" );
-			request.setRequestEntity( requestEntity );
-
 			this.client.executeMethod( request );
 		}
 		catch ( IOException e )
