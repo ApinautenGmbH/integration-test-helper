@@ -6,12 +6,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="target/integration-test-helper-1.0.0-javadoc.jar"/>
-	<classpathentry kind="lib" path="target/integration-test-helper-1.0.0-sources.jar"/>
-	<classpathentry kind="lib" path="target/integration-test-helper-1.0.0.jar"/>
-	<classpathentry kind="lib" path="target/nexus-staging/staging/ba17b920db9a5/com/apiomat/helper/integration-test-helper/1.0.0/integration-test-helper-1.0.0-javadoc.jar"/>
-	<classpathentry kind="lib" path="target/nexus-staging/staging/ba17b920db9a5/com/apiomat/helper/integration-test-helper/1.0.0/integration-test-helper-1.0.0-sources.jar"/>
-	<classpathentry kind="lib" path="target/nexus-staging/staging/ba17b920db9a5/com/apiomat/helper/integration-test-helper/1.0.0/integration-test-helper-1.0.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>

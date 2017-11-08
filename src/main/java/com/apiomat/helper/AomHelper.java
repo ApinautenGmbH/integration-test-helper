@@ -26,9 +26,9 @@ import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
 import org.junit.Assert;
 
 /**
@@ -44,9 +44,9 @@ public class AomHelper
 	 * @param response response from previous request
 	 * @return the ID from the location header in the HTTP response
 	 */
-	public static String getIdFromLocationHeader( final HttpMethod response )
+	public static String getIdFromLocationHeader( final HttpResponse response )
 	{
-		final String location = response.getResponseHeader( "Location" ).getValue( );
+		final String location = response.getFirstHeader( "Location" ).getValue( );
 		return getIdFromUrl( location );
 	}
 
@@ -181,6 +181,19 @@ public class AomHelper
 	public static long unzip( final byte[ ] data, final String targetPath )
 	{
 		final InputStream input = new ByteArrayInputStream( data );
+		return unzip( input, targetPath );
+	}
+
+	/**
+	 * Unzips a byte array into a path
+	 *
+	 * @param input
+	 *        input stream to unzip (assumes a ZipInputStream )
+	 * @param targetPath the oath to unzip to
+	 * @return number of files having been unzipped
+	 */
+	public static long unzip( final InputStream input, final String targetPath )
+	{
 		final byte[ ] buffer = new byte[ 1024 ];
 		final ZipInputStream zip = new ZipInputStream( input );
 		long unzippedFiles = 0;
