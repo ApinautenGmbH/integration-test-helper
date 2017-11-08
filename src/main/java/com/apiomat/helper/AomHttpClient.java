@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
@@ -898,6 +899,25 @@ public class AomHttpClient
 	 */
 	public HttpResponse getObjects( String moduleName, String dataModelName, String query )
 	{
+		return getObjects( moduleName, dataModelName, query, null );
+	}
+
+	/**
+	 * Get a list of objects for the given query
+	 *
+	 * @param moduleName
+	 *        the modulenname
+	 * @param dataModelName
+	 *        the name of the datamodels
+	 * @param query
+	 *        ApiOmat query string, may be null to append no query
+	 * @param additionalRequestHeaders
+	 *        additional headers to be set
+	 * @return request object to check status codes and return values
+	 */
+	public HttpResponse getObjects( String moduleName, String dataModelName, String query, 
+		Map<String, String> additionalRequestHeaders )
+	{
 		final HttpGet request = new HttpGet(
 			this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/" + dataModelName +
 				( query == null ? "" : "?q=" + query ) );
@@ -906,6 +926,10 @@ public class AomHttpClient
 		request.addHeader( "x-apiomat-apikey", this.apiKey );
 		request.addHeader( "x-apiomat-system", this.system.toString( ) );
 		request.addHeader( "x-apiomat-sdkVersion", "1.0" );
+		if ( additionalRequestHeaders != null )
+		{
+			additionalRequestHeaders.forEach( ( name, value ) -> request.addHeader( name, value ) );
+		}
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
