@@ -29,6 +29,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -523,14 +524,12 @@ public class AomHttpClient
 			"{ \"authClassesMap\" : { \"" + this.system.toString( ) + "\": { \"1\":\"Basics$User\", \"2\": \"" +
 				moduleName + "$" + className +
 				"\"}}}";
-		final HttpEntity requestEntity = EntityBuilder.create( ).setText( data )
-			.setContentType( ContentType.APPLICATION_JSON ).setContentEncoding( "UTF-8" ).build( );
-		request.setEntity( requestEntity );
+
+		request.setEntity( new StringEntity( data, ContentType.APPLICATION_JSON ) );
 
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
-
 			return response;
 		}
 		catch ( final IOException e )
@@ -554,14 +553,11 @@ public class AomHttpClient
 		HttpPut request = new HttpPut( this.yambasBase + "modules/" + moduleName );
 		setAuthorizationHeader( request );
 		request.addHeader( "x-apiomat-system", this.system.toString( ) );
+		request.setEntity( new StringEntity( objectToUpdate.toString( ), ContentType.APPLICATION_JSON ) );
+
 		try
 		{
-			final HttpEntity requestEntity = EntityBuilder.create( ).setText( objectToUpdate.toString( ) )
-				.setContentType( ContentType.APPLICATION_JSON ).setContentEncoding( "UTF-8" ).build( );
-			request.setEntity( requestEntity );
-
 			final HttpResponse response = this.client.execute( request );
-
 			return response;
 		}
 		catch ( final IOException e )
@@ -598,11 +594,10 @@ public class AomHttpClient
 		request.addHeader( "x-apiomat-system", this.system.toString( ) );
 		try
 		{
-			final HttpEntity requestEntity = EntityBuilder.create( )
-				.setText( "{\"applicationStatus\":{\"" + this.system + "\":\"ACTIVE\"}, \"applicationName\":\"" +
-					appName + "\"}" )
-				.setContentType( ContentType.APPLICATION_JSON )
-				.setContentEncoding( "UTF-8" ).build( );
+			final HttpEntity requestEntity = new StringEntity(
+				"{\"applicationStatus\":{\"" + this.system + "\":\"ACTIVE\"}, \"applicationName\":\"" +
+					appName + "\"}",
+				ContentType.APPLICATION_JSON );
 			request.setEntity( requestEntity );
 
 			final HttpResponse response = this.client.execute( request );
@@ -640,11 +635,10 @@ public class AomHttpClient
 		request.addHeader( "x-apiomat-system", this.system.toString( ) );
 		try
 		{
-			final HttpEntity requestEntity = EntityBuilder.create( )
-				.setText( "{\"configuration\":" + "	{\"" + this.system.toString( ).toLowerCase( ) + "Config\": {\"" +
-					moduleName + "\":{\"" + key + "\":\"" + value + "\"}}}, \"applicationName\":\"" + appName + "\"}" )
-				.setContentType( ContentType.APPLICATION_JSON )
-				.setContentEncoding( "UTF-8" ).build( );
+			final HttpEntity requestEntity = new StringEntity(
+				"{\"configuration\":" + "	{\"" + this.system.toString( ).toLowerCase( ) + "Config\": {\"" +
+					moduleName + "\":{\"" + key + "\":\"" + value + "\"}}}, \"applicationName\":\"" + appName + "\"}",
+				ContentType.APPLICATION_JSON );
 			request.setEntity( requestEntity );
 
 			final HttpResponse response = this.client.execute( request );
@@ -845,10 +839,8 @@ public class AomHttpClient
 		try
 		{
 			otherFieldsObject.put( "@type", moduleName + '$' + dataModelName );
-			final HttpEntity requestEntity = EntityBuilder.create( )
-				.setText( otherFieldsObject.toString( ) )
-				.setContentType( ContentType.APPLICATION_JSON )
-				.setContentEncoding( "UTF-8" ).build( );
+			final HttpEntity requestEntity =
+				new StringEntity( otherFieldsObject.toString( ), ContentType.APPLICATION_JSON );
 			request.setEntity( requestEntity );
 			final HttpResponse response = this.client.execute( request );
 
@@ -959,10 +951,8 @@ public class AomHttpClient
 
 		try
 		{
-			final HttpEntity requestEntity = EntityBuilder.create( )
-				.setText( objectToUpdate.toString( ) )
-				.setContentType( ContentType.APPLICATION_JSON )
-				.setContentEncoding( "UTF-8" ).build( );
+			final HttpEntity requestEntity =
+				new StringEntity( objectToUpdate.toString( ), ContentType.APPLICATION_JSON );
 			request.setEntity( requestEntity );
 
 			final HttpResponse response = this.client.execute( request );
@@ -1013,10 +1003,7 @@ public class AomHttpClient
 		{
 			final String data = "{ \"@type\":\"" + refClassModule + "$" + refClassName + "\",\"" +
 				( isTransientRef ? "foreignId" : "id" ) + "\":\"" + refId + "\"}";
-			final HttpEntity requestEntity = EntityBuilder.create( )
-				.setText( data )
-				.setContentType( ContentType.APPLICATION_JSON )
-				.setContentEncoding( "UTF-8" ).build( );
+			final HttpEntity requestEntity = new StringEntity( data, ContentType.APPLICATION_JSON );
 			request.setEntity( requestEntity );
 
 			final HttpResponse response = this.client.execute( request );
