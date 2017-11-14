@@ -57,6 +57,8 @@ public class AomHttpClient
 
 	private String apiKey;
 	private String appName;
+	private String sdkVersion = "1.0";
+
 
 	/**
 	 * Creates a new AomHttpClient
@@ -178,6 +180,22 @@ public class AomHttpClient
 	public String getYambasBase( )
 	{
 		return this.yambasBase;
+	}
+
+	/**
+	 * @return the sdkVersion
+	 */
+	public String getSdkVersion( )
+	{
+		return this.sdkVersion;
+	}
+
+	/**
+	 * @param sdkVersion the sdkVersion to set
+	 */
+	public void setSdkVersion( String sdkVersion )
+	{
+		this.sdkVersion = sdkVersion;
 	}
 
 	/* ================== Methods ===================================== */
@@ -787,7 +805,7 @@ public class AomHttpClient
 		setAuthorizationHeader( request );
 		request.addHeader( "ContentType", "application/json" );
 		request.addHeader( "x-apiomat-system", this.system.toString( ) );
-		request.addHeader( "x-apiomat-sdkVersion", "1.0" );
+		request.addHeader( "x-apiomat-sdkVersion", this.sdkVersion );
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
@@ -836,7 +854,7 @@ public class AomHttpClient
 		request.addHeader( "ContentType", "application/json" );
 		request.addHeader( "x-apiomat-apikey", this.apiKey );
 		request.addHeader( "x-apiomat-system", this.system.toString( ) );
-		request.addHeader( "x-apiomat-sdkVersion", "1.0" );
+		request.addHeader( "x-apiomat-sdkVersion", this.sdkVersion );
 		try
 		{
 			otherFieldsObject.put( "@type", moduleName + '$' + dataModelName );
@@ -873,7 +891,7 @@ public class AomHttpClient
 		request.addHeader( "ContentType", "application/json" );
 		request.addHeader( "x-apiomat-apikey", this.apiKey );
 		request.addHeader( "x-apiomat-system", this.system.toString( ) );
-		request.addHeader( "x-apiomat-sdkVersion", "1.0" );
+		request.addHeader( "x-apiomat-sdkVersion", this.sdkVersion );
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
@@ -925,7 +943,7 @@ public class AomHttpClient
 		request.addHeader( "ContentType", "application/json" );
 		request.addHeader( "x-apiomat-apikey", this.apiKey );
 		request.addHeader( "x-apiomat-system", this.system.toString( ) );
-		request.addHeader( "x-apiomat-sdkVersion", "1.0" );
+		request.addHeader( "x-apiomat-sdkVersion", this.sdkVersion );
 		if ( additionalRequestHeaders != null )
 		{
 			additionalRequestHeaders.forEach( ( name, value ) -> request.addHeader( name, value ) );
@@ -969,7 +987,7 @@ public class AomHttpClient
 		request.addHeader( "ContentType", "application/json" );
 		request.addHeader( "x-apiomat-apikey", this.apiKey );
 		request.addHeader( "x-apiomat-system", this.system.toString( ) );
-		request.addHeader( "x-apiomat-sdkVersion", "1.0" );
+		request.addHeader( "x-apiomat-sdkVersion", this.sdkVersion );
 		request.addHeader( "X-apiomat-fullupdate", String.valueOf( fullUpdate ) );
 		objectToUpdate.put( "@type", moduleName + "$" + dataModelName );
 
