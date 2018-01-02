@@ -59,7 +59,6 @@ public class AomHttpClient
 	private String appName;
 	private String sdkVersion = "1.0";
 
-
 	/**
 	 * Creates a new AomHttpClient
 	 *
@@ -356,7 +355,7 @@ public class AomHttpClient
 	 * @param password password of the customer
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse createCustomer( String customerName, String email, String password )
+	public Response createCustomer( String customerName, String email, String password )
 	{
 		final HttpPost request = new HttpPost( this.yambasBase + "customers" );
 		setAuthorizationHeader( request );
@@ -372,7 +371,7 @@ public class AomHttpClient
 			final HttpResponse response = this.client.execute( request );
 
 			this.customerName = customerName;
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -387,7 +386,7 @@ public class AomHttpClient
 	 * @param customerName unique name of the customer
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse deleteCustomer( String customerName )
+	public Response deleteCustomer( String customerName )
 	{
 		HttpDelete request = new HttpDelete( this.yambasBase + "customers/" + customerName );
 		setAuthorizationHeader( request );
@@ -396,7 +395,7 @@ public class AomHttpClient
 			final HttpResponse response = this.client.execute( request );
 
 			this.customerName = null;
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -411,7 +410,7 @@ public class AomHttpClient
 	 * @param appName the name of the app to create
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse createApp( String appName )
+	public Response createApp( String appName )
 	{
 		return createApp( this.customerName, appName );
 	}
@@ -423,7 +422,7 @@ public class AomHttpClient
 	 * @param appName the name of the app to create
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse createApp( String customerName, String appName )
+	public Response createApp( String customerName, String appName )
 	{
 		final HttpPost request = new HttpPost( this.yambasBase + "customers/" + customerName + "/apps" );
 		setAuthorizationHeader( request );
@@ -437,7 +436,7 @@ public class AomHttpClient
 			final HttpResponse response = this.client.execute( request );
 
 			this.appName = appName;
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -452,7 +451,7 @@ public class AomHttpClient
 	 * @param moduleName name of the module to add to the current app
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse addModuleToApp( String moduleName )
+	public Response addModuleToApp( String moduleName )
 	{
 		return addModuleToApp( this.customerName, this.appName, moduleName );
 	}
@@ -468,7 +467,7 @@ public class AomHttpClient
 	 *        the name of the module to add
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse addModuleToApp( String customerName, String appName, String moduleName )
+	public Response addModuleToApp( String customerName, String appName, String moduleName )
 	{
 		HttpPost request = new HttpPost(
 			this.yambasBase + "customers/" + customerName + "/apps/" + appName + "/usedmodules" );
@@ -483,7 +482,7 @@ public class AomHttpClient
 			request.setEntity( new UrlEncodedFormEntity( data ) );
 			final HttpResponse response = this.client.execute( request );
 
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -501,7 +500,7 @@ public class AomHttpClient
 	 *        if set to false, the module is only deleted from the current system and wil still exist in database
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse deleteModule( String moduleName, boolean deleteCompletely )
+	public Response deleteModule( String moduleName, boolean deleteCompletely )
 	{
 		HttpDelete request = new HttpDelete(
 			this.yambasBase + "modules/" + moduleName + "?deleteCompletely=" + String.valueOf( deleteCompletely ) );
@@ -510,8 +509,7 @@ public class AomHttpClient
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
-
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -530,7 +528,7 @@ public class AomHttpClient
 	 * @return request object to check status codes and return values
 	 * @throws UnsupportedEncodingException exc
 	 */
-	public HttpResponse addAuthModuleToApp( String customerName, String appName, String moduleName,
+	public Response addAuthModuleToApp( String customerName, String appName, String moduleName,
 		String className )
 		throws UnsupportedEncodingException
 	{
@@ -549,7 +547,7 @@ public class AomHttpClient
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -567,7 +565,7 @@ public class AomHttpClient
 	 *        JSON containing the key/value pais to use for update
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse updateModule( String moduleName, JSONObject objectToUpdate )
+	public Response updateModule( String moduleName, JSONObject objectToUpdate )
 	{
 		HttpPut request = new HttpPut( this.yambasBase + "modules/" + moduleName );
 		setAuthorizationHeader( request );
@@ -577,7 +575,7 @@ public class AomHttpClient
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -591,7 +589,7 @@ public class AomHttpClient
 	 *
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse deployApp( )
+	public Response deployApp( )
 	{
 		return deployApp( this.customerName, this.appName );
 	}
@@ -605,7 +603,7 @@ public class AomHttpClient
 	 *        the name of the app
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse deployApp( String customerName, String appName )
+	public Response deployApp( String customerName, String appName )
 	{
 		HttpPut request = new HttpPut( this.yambasBase + "customers/" + customerName + "/apps/" + appName );
 		setAuthorizationHeader( request );
@@ -620,8 +618,7 @@ public class AomHttpClient
 			request.setEntity( requestEntity );
 
 			final HttpResponse response = this.client.execute( request );
-
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -645,7 +642,7 @@ public class AomHttpClient
 	 *        value of the config
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse updateConfig( String customerName, String appName, String moduleName, String key,
+	public Response updateConfig( String customerName, String appName, String moduleName, String key,
 		String value )
 	{
 		final HttpPut request = new HttpPut( this.yambasBase + "customers/" + customerName + "/apps/" + appName );
@@ -661,8 +658,7 @@ public class AomHttpClient
 			request.setEntity( requestEntity );
 
 			final HttpResponse response = this.client.execute( request );
-
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -699,7 +695,7 @@ public class AomHttpClient
 	 *
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse getApp( )
+	public Response getApp( )
 	{
 		return getApp( this.customerName, this.appName, this.system );
 	}
@@ -715,7 +711,7 @@ public class AomHttpClient
 	 *        the used system
 	 * @return trequest object to check status codes and return values
 	 */
-	public HttpResponse getApp( String customerName, String appName, AOMSystem system )
+	public Response getApp( String customerName, String appName, AOMSystem system )
 	{
 		final HttpGet request = new HttpGet( this.yambasBase + "customers/" + customerName + "/apps/" + appName );
 		setAuthorizationHeader( request );
@@ -726,7 +722,7 @@ public class AomHttpClient
 			final JSONObject keysObj = json.getJSONObject( "apiKeys" );
 
 			this.apiKey = keysObj.getString( system.toString( ).toLowerCase( ) + "ApiKey" );
-			return resp;
+			return new Response( resp );
 		}
 		catch ( final IOException e )
 		{
@@ -740,7 +736,7 @@ public class AomHttpClient
 	 *
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse deleteApp( )
+	public Response deleteApp( )
 	{
 		return deleteApp( this.customerName, this.appName );
 	}
@@ -754,15 +750,14 @@ public class AomHttpClient
 	 *        the name of the app to delete
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse deleteApp( String customerName, String appName )
+	public Response deleteApp( String customerName, String appName )
 	{
 		final HttpDelete request = new HttpDelete( this.yambasBase + "customers/" + customerName + "/apps/" + appName );
 		setAuthorizationHeader( request );
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
-
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -776,15 +771,14 @@ public class AomHttpClient
 	 *
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse dropData( )
+	public Response dropData( )
 	{
 		final HttpDelete request = new HttpDelete( this.yambasBase + "apps/" + this.appName + "/models" );
 		setAuthorizationHeader( request );
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
-
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -799,7 +793,7 @@ public class AomHttpClient
 	 * @param moduleName name of the module
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse getMetaModels( final String moduleName )
+	public Response getMetaModels( final String moduleName )
 	{
 		final HttpGet request = new HttpGet( this.yambasBase + "modules/" + moduleName + "/metamodels" );
 		setAuthorizationHeader( request );
@@ -809,8 +803,7 @@ public class AomHttpClient
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
-
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -829,7 +822,7 @@ public class AomHttpClient
 	 *        the name of the class
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse createObject( String moduleName, String dataModelName )
+	public Response createObject( String moduleName, String dataModelName )
 	{
 		return createObject( moduleName, dataModelName, new JSONObject( ) );
 	}
@@ -846,7 +839,7 @@ public class AomHttpClient
 	 *        the other fields to set as JSONObject (the @type field will be added automatically)
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse createObject( String moduleName, String dataModelName, JSONObject otherFieldsObject )
+	public Response createObject( String moduleName, String dataModelName, JSONObject otherFieldsObject )
 	{
 		final HttpPost request = new HttpPost(
 			this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/" + dataModelName );
@@ -862,8 +855,7 @@ public class AomHttpClient
 				new StringEntity( otherFieldsObject.toString( ), ContentType.APPLICATION_JSON );
 			request.setEntity( requestEntity );
 			final HttpResponse response = this.client.execute( request );
-
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -883,7 +875,7 @@ public class AomHttpClient
 	 *        the ID of the object to return
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse getObject( String moduleName, String dataModelName, String dataModelId )
+	public Response getObject( String moduleName, String dataModelName, String dataModelId )
 	{
 		final HttpGet request = new HttpGet( this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/" +
 			dataModelName + "/" + dataModelId );
@@ -895,7 +887,7 @@ public class AomHttpClient
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -915,7 +907,7 @@ public class AomHttpClient
 	 *        ApiOmat query string, may be null to append no query
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse getObjects( String moduleName, String dataModelName, String query )
+	public Response getObjects( String moduleName, String dataModelName, String query )
 	{
 		return getObjects( moduleName, dataModelName, query, null );
 	}
@@ -933,7 +925,7 @@ public class AomHttpClient
 	 *        additional headers to be set
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse getObjects( String moduleName, String dataModelName, String query, 
+	public Response getObjects( String moduleName, String dataModelName, String query,
 		Map<String, String> additionalRequestHeaders )
 	{
 		final HttpGet request = new HttpGet(
@@ -951,7 +943,7 @@ public class AomHttpClient
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -976,7 +968,7 @@ public class AomHttpClient
 	 *        JSON containing the key/value pais to use for update
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse updateObject( String moduleName, String dataModelName, String dataModelId,
+	public Response updateObject( String moduleName, String dataModelName, String dataModelId,
 		boolean fullUpdate,
 		JSONObject objectToUpdate )
 	{
@@ -998,8 +990,7 @@ public class AomHttpClient
 			request.setEntity( requestEntity );
 
 			final HttpResponse response = this.client.execute( request );
-
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -1030,7 +1021,7 @@ public class AomHttpClient
 	 *        the name of the referenced class
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse addReference( String moduleName, String dataModelName, String dataModelId,
+	public Response addReference( String moduleName, String dataModelName, String dataModelId,
 		String attributeName,
 		String refId, boolean isTransientRef, String refClassModule, String refClassName )
 	{
@@ -1049,7 +1040,7 @@ public class AomHttpClient
 			request.setEntity( requestEntity );
 
 			final HttpResponse response = this.client.execute( request );
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -1071,7 +1062,7 @@ public class AomHttpClient
 	 *        the name of the (reference) attribute
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse getReference( String moduleName, String dataModelName, String dataModelId,
+	public Response getReference( String moduleName, String dataModelName, String dataModelId,
 		String refAttributeName )
 	{
 		final HttpGet request = new HttpGet( this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/" +
@@ -1083,7 +1074,7 @@ public class AomHttpClient
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -1107,7 +1098,7 @@ public class AomHttpClient
 	 *        the reference id
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse deleteReference( String moduleName, String dataModelName, String dataModelId,
+	public Response deleteReference( String moduleName, String dataModelName, String dataModelId,
 		String refAttributeName, String refId )
 	{
 		final HttpDelete request = new HttpDelete( this.yambasBase + "apps/" + this.appName + "/models/" + moduleName +
@@ -1119,7 +1110,7 @@ public class AomHttpClient
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -1139,7 +1130,7 @@ public class AomHttpClient
 	 *        the datamodel-id
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse deleteObject( String moduleName, String dataModelName, String dataModelId )
+	public Response deleteObject( String moduleName, String dataModelName, String dataModelId )
 	{
 		final HttpDelete request = new HttpDelete( this.yambasBase + "apps/" + this.appName + "/models/" + moduleName +
 			"/" + dataModelName + "/" + dataModelId );
@@ -1150,8 +1141,7 @@ public class AomHttpClient
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
-
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -1167,7 +1157,7 @@ public class AomHttpClient
 	 * @param isImage indicates whether this is an image or a file
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse postStaticData( final byte[ ] content, final boolean isImage )
+	public Response postStaticData( final byte[ ] content, final boolean isImage )
 	{
 		final HttpPost request =
 			new HttpPost( this.yambasBase + "apps/" + this.appName + "/data/" + ( isImage ? "images/" : "files/" ) );
@@ -1178,8 +1168,7 @@ public class AomHttpClient
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
-
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -1195,7 +1184,7 @@ public class AomHttpClient
 	 * @param isImage indicates whether this is an image or a file
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse deleteStaticData( String id, final boolean isImage )
+	public Response deleteStaticData( String id, final boolean isImage )
 	{
 		final HttpDelete request =
 			new HttpDelete(
@@ -1206,8 +1195,7 @@ public class AomHttpClient
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
-
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -1224,7 +1212,7 @@ public class AomHttpClient
 	 * @param contentTypes content types ("application/json" used if not provided)
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse getRequestRestEndpoint( String path, String... contentTypes )
+	public Response getRequestRestEndpoint( String path, String... contentTypes )
 	{
 		final HttpGet request = new HttpGet( this.yambasBase + path );
 		setAuthorizationHeader( request );
@@ -1240,8 +1228,8 @@ public class AomHttpClient
 		request.addHeader( "x-apiomat-system", getSystem( ).toString( ) );
 		try
 		{
-			final HttpResponse resp = this.client.execute( request );
-			return resp;
+			final HttpResponse response = this.client.execute( request );
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -1259,7 +1247,7 @@ public class AomHttpClient
 	 *        the payload as input stream
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse postRequestRestEndpoint( String path, InputStream payLoad )
+	public Response postRequestRestEndpoint( String path, InputStream payLoad )
 	{
 		final HttpPost request = new HttpPost( this.yambasBase + path );
 
@@ -1272,8 +1260,7 @@ public class AomHttpClient
 		{
 			request.setEntity( EntityBuilder.create( ).setStream( payLoad ).build( ) );
 			final HttpResponse response = this.client.execute( request );
-
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -1289,7 +1276,7 @@ public class AomHttpClient
 	 *        the AppName
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse exportAppDataToCSV( final String appName )
+	public Response exportAppDataToCSV( final String appName )
 	{
 		return getRequestRestEndpoint( "modules/csv/spec/" + appName );
 	}
@@ -1304,7 +1291,7 @@ public class AomHttpClient
 	 *
 	 * @return request object to check status codes and return values
 	 */
-	public HttpResponse importCSVToApp( String appName, InputStream data )
+	public Response importCSVToApp( String appName, InputStream data )
 	{
 		final HttpPost request = new HttpPost( this.yambasBase + "modules/csv/spec/" + appName );
 		setAuthorizationHeader( request );
@@ -1317,7 +1304,7 @@ public class AomHttpClient
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
-			return response;
+			return new Response( response );
 		}
 		catch ( final IOException e )
 		{
@@ -1336,10 +1323,10 @@ public class AomHttpClient
 	 * @return request object to check status codes and return values
 	 * @throws IOException exc
 	 */
-	public HttpResponse downloadNM( final String moduleName, final String targetPath ) throws IOException
+	public Response downloadNM( final String moduleName, final String targetPath ) throws IOException
 	{
-		final HttpResponse response = getRequestRestEndpoint( "modules/" + moduleName + "/sdk" );
-		AomHelper.unzip( response.getEntity( ).getContent( ), targetPath );
+		final Response response = getRequestRestEndpoint( "modules/" + moduleName + "/sdk" );
+		AomHelper.unzip( response.getEntityContent( ), targetPath );
 		return response;
 	}
 
