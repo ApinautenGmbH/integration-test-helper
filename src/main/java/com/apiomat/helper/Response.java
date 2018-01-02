@@ -38,17 +38,14 @@ public class Response
 		this.status = response.getStatusLine( );
 		this.headers = response.getAllHeaders( );
 
-		if ( response.getEntity( ) != null )
+		try
 		{
-			try
-			{
-				this.entityContent = EntityUtils.toByteArray( response.getEntity( ) );
-				EntityUtils.consume( response.getEntity( ) );
-			}
-			catch ( IOException e )
-			{
-				e.printStackTrace( );
-			}
+			this.entityContent = EntityUtils.toByteArray( response.getEntity( ) );
+			// EntityUtils.consume( response.getEntity( ) );
+		}
+		catch ( IllegalArgumentException | IOException e )
+		{
+			// ok
 		}
 	}
 
