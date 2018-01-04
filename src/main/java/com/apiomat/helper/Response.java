@@ -65,9 +65,15 @@ public class Response
 		return this.entityContent;
 	}
 
+	/**
+	 * returns an empty string if the response has no content
+	 *
+	 * @return an empty string if the response has no content
+	 */
 	public String getEntityContentAsString( )
 	{
-		return new String( getEntityContent( ) );
+		final byte[ ] content = getEntityContent( );
+		return content == null ? "" : new String( content );
 	}
 
 	public String getHeader( final String name )
