@@ -55,7 +55,7 @@ public class AomHttpClient
 	private String password;
 	private String accessToken;
 
-	private String apiKey;
+	private String apiKey = "";
 	private String appName;
 	private String sdkVersion = "1.0";
 
