@@ -446,6 +446,34 @@ public class AomHttpClient
 	}
 
 	/**
+	 * Creates a module for a specific customer
+	 *
+	 * @param customerName the name of the customer
+	 * @param moduleName the name of the module to create
+	 * @return request object to check status codes and return values
+	 */
+	public Response createModule( String customerName, String moduleName )
+	{
+		final HttpPost request = new HttpPost( this.yambasBase + "customers/" + customerName + "/modules" );
+		setAuthorizationHeader( request );
+
+		final List<NameValuePair> data = new ArrayList<NameValuePair>( );
+		data.add( new BasicNameValuePair( "name", moduleName ) );
+
+		try
+		{
+			request.setEntity( new UrlEncodedFormEntity( data ) );
+			final HttpResponse response = this.client.execute( request );
+			return new Response( response );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return null;
+	}
+
+	/**
 	 * Adds the module to the app and customer which were set
 	 *
 	 * @param moduleName name of the module to add to the current app
