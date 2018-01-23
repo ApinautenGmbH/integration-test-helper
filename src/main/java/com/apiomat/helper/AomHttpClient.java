@@ -454,11 +454,12 @@ public class AomHttpClient
 	 */
 	public Response createModule( String customerName, String moduleName )
 	{
-		final HttpPost request = new HttpPost( this.yambasBase + "customers/" + customerName + "/modules" );
+		final HttpPost request = new HttpPost( this.yambasBase + "modules" );
 		setAuthorizationHeader( request );
 
 		final List<NameValuePair> data = new ArrayList<NameValuePair>( );
-		data.add( new BasicNameValuePair( "name", moduleName ) );
+		data.add( new BasicNameValuePair( "moduleName", moduleName ) );
+		data.add( new BasicNameValuePair( "customerName", customerName ) );
 
 		try
 		{
@@ -1298,6 +1299,45 @@ public class AomHttpClient
 	}
 
 	/**
+	 * Sends a binary request to yambas base URL + path. yambas base URL is: yambasHost + "/yambas/rest/"
+	 *
+	 * @param path
+	 *        the path
+	 * @param fieldName
+	 *        name of the binary data field
+	 * @param entityPayload
+	 *        the binary data as input stream
+	 * @return request object to check status codes and return values
+	 */
+	public Response postRequestRestEndpoint( String path, final String fieldName, InputStream entityPayload )
+	{
+		Response response = null;
+		final HttpPost request = new HttpPost( this.yambasBase + path );
+
+		setAuthorizationHeader( request );
+		request.addHeader( "ContentType", ContentType.APPLICATION_OCTET_STREAM.getMimeType( ) );
+		request.addHeader( "x-apiomat-apikey", getApiKey( ) );
+		request.addHeader( "x-apiomat-system", getSystem( ).toString( ) );
+
+		try
+		{
+			EntityBuilder builder = EntityBuilder.create( );
+			builder.setContentType( ContentType.APPLICATION_OCTET_STREAM );
+			builder.setStream( entityPayload );
+
+			final HttpEntity entity = builder.build( );
+			request.setEntity( entity );
+			final HttpResponse responseIntern = this.client.execute( request );
+			response = new Response( responseIntern );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return response;
+	}
+
+	/**
 	 * Dumps an apps data to csv-format
 	 *
 	 * @param appName
@@ -1372,5 +1412,22 @@ public class AomHttpClient
 		{
 			requestMethod.addHeader( "Authorization", authHeader );
 		}
+	}
+
+	/**
+	 * Upload the given module jar
+	 *
+	 * @param moduleName
+	 *        the name of the module to add
+	 * @param update
+	 *        "true" to update classes and module, "overwrite" to update and overwrite changes done in dashboard
+	 *        in the meantime
+	 * @param jarStream
+	 *        Stream of packaged module jar
+	 * @return request object to check status codes and return values
+	 */
+	public Response uploadModule( String moduleName, final String update, final InputStream jarStream )
+	{
+		return postRequestRestEndpoint( "modules/" + moduleName + "/sdk?update=" + update, jarStream );
 	}
 }
