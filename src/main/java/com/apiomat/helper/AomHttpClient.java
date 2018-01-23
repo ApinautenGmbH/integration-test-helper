@@ -1430,4 +1430,40 @@ public class AomHttpClient
 	{
 		return postRequestRestEndpoint( "modules/" + moduleName + "/sdk?update=" + update, jarStream );
 	}
+
+	/**
+	 * Downloads a SDK in given language and return the zipped file in response
+	 *
+	 * @param language
+	 *        language of SDK that should be downloaded
+	 * @return request object to check status codes and return values
+	 * @throws IOException exc
+	 */
+	public Response downloadSDK( final SDKLanguage language ) throws IOException
+	{
+		return downloadSDK( language, null );
+	}
+
+	/**
+	 * Downloads a SDK in given language and extract it to given target path
+	 *
+	 * @param language
+	 *        language of SDK that should be downloaded
+	 * @param targetPath
+	 *        extract path
+	 * @return request object to check status codes and return values
+	 * @throws IOException exc
+	 */
+	public Response downloadSDK( final SDKLanguage language, final String targetPath ) throws IOException
+	{
+		String path =
+			String.format( "customers/%s/apps/%s/sdk/%s", getCustomerName( ), getAppName( ),
+				language.toString( ).toLowerCase( ) );
+		final Response response = getRequestRestEndpoint( path );
+		if ( targetPath != null && targetPath.isEmpty( ) == false )
+		{
+			AomHelper.unzip( response.getEntityContent( ), targetPath );
+		}
+		return response;
+	}
 }
