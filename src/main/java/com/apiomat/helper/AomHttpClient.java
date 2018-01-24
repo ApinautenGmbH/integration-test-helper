@@ -13,6 +13,7 @@ package com.apiomat.helper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -388,20 +390,37 @@ public class AomHttpClient
 	 */
 	public Response deleteCustomer( String customerName )
 	{
-		HttpDelete request = new HttpDelete( this.yambasBase + "customers/" + customerName );
-		setAuthorizationHeader( request );
+		return deleteCustomer( customerName, false );
+	}
+
+	/**
+	 * Deletes the customer and sets customerName to null ({@link #getCustomerName()})
+	 *
+	 * @param customerName unique name of the customer
+	 * @param forceDelete
+	 *        With force set to true, all apps and modules of the deleted customer will be deleted as well
+	 *        With force set to false, the ownership of the modules and apps will be transferred to its organzation.
+	 * @return request object to check status codes and return values
+	 */
+	public Response deleteCustomer( String customerName, final boolean forceDelete )
+	{
+		Response response = null;
 		try
 		{
-			final HttpResponse response = this.client.execute( request );
+			final URIBuilder builder = new URIBuilder( this.yambasBase + "customers/" + customerName );
+			builder.setParameter( "force", String.valueOf( forceDelete ) );
+			HttpDelete request = new HttpDelete( builder.build( ) );
+			setAuthorizationHeader( request );
+			final HttpResponse responseIntern = this.client.execute( request );
 
 			this.customerName = null;
-			return new Response( response );
+			response = new Response( responseIntern );
 		}
-		catch ( final IOException e )
+		catch ( final IOException | URISyntaxException e )
 		{
 			e.printStackTrace( );
 		}
-		return null;
+		return response;
 	}
 
 	/**

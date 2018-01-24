@@ -6,7 +6,8 @@ Helper classes for integration tests
 
 | Version | Changes                                                            |
 | --------|--------------------------------------------------------------------|
-| 1.2.5   | added new methods uploadModule, downloadSDK; fixed createModule method  |
+| 1.2.6   | added method to delete customer with force flag |
+| 1.2.5   | added new methods uploadModule, downloadSDK; fixed createModule method |
 | 1.2.4   | createModule method |
 | 1.2.3   | ApiKey set to empty string |
 | 1.2.2   | Fix NullPointerException in Response#getEntityContentAsString() |
