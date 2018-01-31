@@ -1297,24 +1297,7 @@ public class AomHttpClient
 	 */
 	public Response postRequestRestEndpoint( String path, InputStream payLoad )
 	{
-		final HttpPost request = new HttpPost( this.yambasBase + path );
-
-		setAuthorizationHeader( request );
-		request.addHeader( "ContentType", "application/json" );
-		request.addHeader( "x-apiomat-apikey", getApiKey( ) );
-		request.addHeader( "x-apiomat-system", getSystem( ).toString( ) );
-
-		try
-		{
-			request.setEntity( EntityBuilder.create( ).setStream( payLoad ).build( ) );
-			final HttpResponse response = this.client.execute( request );
-			return new Response( response );
-		}
-		catch ( final IOException e )
-		{
-			e.printStackTrace( );
-		}
-		return null;
+		return postRequestRestEndpoint( path, "application/json", payLoad );
 	}
 
 	/**
@@ -1322,38 +1305,49 @@ public class AomHttpClient
 	 *
 	 * @param path
 	 *        the path
-	 * @param fieldName
-	 *        name of the binary data field
+	 * @param mimeType
+	 *        MIME type that should be used
 	 * @param entityPayload
 	 *        the binary data as input stream
 	 * @return request object to check status codes and return values
 	 */
-	public Response postRequestRestEndpoint( String path, final String fieldName, InputStream entityPayload )
+	public Response postRequestRestEndpoint( String path, final String mimeType, InputStream entityPayload )
 	{
-		Response response = null;
+		return postRequestRestEndpoint( path, mimeType, EntityBuilder.create( ).setStream( entityPayload ).build( ) );
+	}
+
+	/**
+	 * Sends a request to yambas base URL + path. yambas base URL is: yambasHost + "/yambas/rest/"
+	 *
+	 * @param path
+	 *        the path
+	 * @param mimeType
+	 *        MIME type that should be used
+	 * @param httpEntity
+	 *        the HTTP entity that should be used
+	 * @return request object to check status codes and return values
+	 */
+	public Response postRequestRestEndpoint( String path, final String mimeType, final HttpEntity httpEntity )
+	{
+		Response resp = null;
 		final HttpPost request = new HttpPost( this.yambasBase + path );
 
 		setAuthorizationHeader( request );
-		request.addHeader( "ContentType", ContentType.APPLICATION_OCTET_STREAM.getMimeType( ) );
+		request.addHeader( "ContentType", mimeType );
 		request.addHeader( "x-apiomat-apikey", getApiKey( ) );
 		request.addHeader( "x-apiomat-system", getSystem( ).toString( ) );
 
 		try
 		{
-			EntityBuilder builder = EntityBuilder.create( );
-			builder.setContentType( ContentType.APPLICATION_OCTET_STREAM );
-			builder.setStream( entityPayload );
-
-			final HttpEntity entity = builder.build( );
-			request.setEntity( entity );
-			final HttpResponse responseIntern = this.client.execute( request );
-			response = new Response( responseIntern );
+			request.setEntity( httpEntity );
+			final HttpResponse response = this.client.execute( request );
+			resp = new Response( response );
 		}
 		catch ( final IOException e )
 		{
 			e.printStackTrace( );
 		}
-		return response;
+		return resp;
 	}
 
 	/**
@@ -1447,7 +1441,8 @@ public class AomHttpClient
 	 */
 	public Response uploadModule( String moduleName, final String update, final InputStream jarStream )
 	{
-		return postRequestRestEndpoint( "modules/" + moduleName + "/sdk?update=" + update, jarStream );
+		return postRequestRestEndpoint( "modules/" + moduleName + "/sdk?update=" + update,
+			ContentType.APPLICATION_OCTET_STREAM.getMimeType( ), jarStream );
 	}
 
 	/**
@@ -1484,5 +1479,87 @@ public class AomHttpClient
 			AomHelper.unzip( response.getEntityContent( ), targetPath );
 		}
 		return response;
+	}
+
+	/**
+	 * Sets a customers roles for a specific app or module, or both
+	 *
+	 * @param customerName
+	 *        the name of the customer
+	 * @param appName
+	 *        name of the app
+	 * @param role
+	 *        customer role that should be set
+	 * @return request object to check status codes and return values
+	 */
+	public Response setRoleForAppBackend( final String customerName, final String appName,
+		final CustomerRole role )
+	{
+		return setRole( customerName, appName, null, role );
+	}
+
+	/**
+	 * Sets a customers roles for a specific module
+	 *
+	 * @param customerName
+	 *        the name of the customer
+	 * @param moduleName
+	 *        name of the module
+	 * @param role
+	 *        customer role that should be set
+	 * @return request object to check status codes and return values
+	 */
+	public Response setRoleForModule( final String customerName, final String moduleName,
+		final CustomerRole role )
+	{
+		return setRole( customerName, null, moduleName, role );
+	}
+
+	/**
+	 * Sets a customers roles for a specific app or module, or both
+	 *
+	 * @param customerName
+	 *        the name of the customer
+	 * @param appName
+	 *        name of the app
+	 * @param moduleName
+	 *        name of the module
+	 * @param role
+	 *        customer role that should be set
+	 * @return request object to check status codes and return values
+	 */
+	public Response setRole( final String customerName, final String appName, final String moduleName,
+		final CustomerRole role )
+	{
+		Response resp = null;
+		String intCustomerName = customerName;
+		if ( intCustomerName == null )
+		{
+			intCustomerName = this.customerName;
+		}
+		List<NameValuePair> formParams = new ArrayList<NameValuePair>( );
+		if ( appName != null && appName.isEmpty( ) == false )
+		{
+			formParams.add( new BasicNameValuePair( "appName", appName ) );
+		}
+		if ( moduleName != null && moduleName.isEmpty( ) == false )
+		{
+			formParams.add( new BasicNameValuePair( "moduleName", moduleName ) );
+		}
+		formParams.add( new BasicNameValuePair( "roleName", role.toString( ) ) );
+		UrlEncodedFormEntity httpEntity = null;
+		try
+		{
+			httpEntity = new UrlEncodedFormEntity( formParams );
+			resp = postRequestRestEndpoint( "customers/" + intCustomerName + "/roles",
+				ContentType.APPLICATION_FORM_URLENCODED.getMimeType( ), httpEntity );
+		}
+		catch ( UnsupportedEncodingException e )
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace( );
+		}
+
+		return resp;
 	}
 }
