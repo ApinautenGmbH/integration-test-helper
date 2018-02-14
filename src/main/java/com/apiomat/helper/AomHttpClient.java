@@ -13,6 +13,7 @@ package com.apiomat.helper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -55,7 +57,7 @@ public class AomHttpClient
 	private String password;
 	private String accessToken;
 
-	private String apiKey;
+	private String apiKey = "";
 	private String appName;
 	private String sdkVersion = "1.0";
 
@@ -388,20 +390,37 @@ public class AomHttpClient
 	 */
 	public Response deleteCustomer( String customerName )
 	{
-		HttpDelete request = new HttpDelete( this.yambasBase + "customers/" + customerName );
-		setAuthorizationHeader( request );
+		return deleteCustomer( customerName, false );
+	}
+
+	/**
+	 * Deletes the customer and sets customerName to null ({@link #getCustomerName()})
+	 *
+	 * @param customerName unique name of the customer
+	 * @param forceDelete
+	 *        With force set to true, all apps and modules of the deleted customer will be deleted as well
+	 *        With force set to false, the ownership of the modules and apps will be transferred to its organzation.
+	 * @return request object to check status codes and return values
+	 */
+	public Response deleteCustomer( String customerName, final boolean forceDelete )
+	{
+		Response response = null;
 		try
 		{
-			final HttpResponse response = this.client.execute( request );
+			final URIBuilder builder = new URIBuilder( this.yambasBase + "customers/" + customerName );
+			builder.setParameter( "force", String.valueOf( forceDelete ) );
+			HttpDelete request = new HttpDelete( builder.build( ) );
+			setAuthorizationHeader( request );
+			final HttpResponse responseIntern = this.client.execute( request );
 
 			this.customerName = null;
-			return new Response( response );
+			response = new Response( responseIntern );
 		}
-		catch ( final IOException e )
+		catch ( final IOException | URISyntaxException e )
 		{
 			e.printStackTrace( );
 		}
-		return null;
+		return response;
 	}
 
 	/**
@@ -436,6 +455,35 @@ public class AomHttpClient
 			final HttpResponse response = this.client.execute( request );
 
 			this.appName = appName;
+			return new Response( response );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return null;
+	}
+
+	/**
+	 * Creates a module for a specific customer
+	 *
+	 * @param customerName the name of the customer
+	 * @param moduleName the name of the module to create
+	 * @return request object to check status codes and return values
+	 */
+	public Response createModule( String customerName, String moduleName )
+	{
+		final HttpPost request = new HttpPost( this.yambasBase + "modules" );
+		setAuthorizationHeader( request );
+
+		final List<NameValuePair> data = new ArrayList<NameValuePair>( );
+		data.add( new BasicNameValuePair( "moduleName", moduleName ) );
+		data.add( new BasicNameValuePair( "customerName", customerName ) );
+
+		try
+		{
+			request.setEntity( new UrlEncodedFormEntity( data ) );
+			final HttpResponse response = this.client.execute( request );
 			return new Response( response );
 		}
 		catch ( final IOException e )
@@ -1355,24 +1403,57 @@ public class AomHttpClient
 	 */
 	public Response postRequestRestEndpoint( String path, InputStream payLoad )
 	{
+		return postRequestRestEndpoint( path, "application/json", payLoad );
+	}
+
+	/**
+	 * Sends a binary request to yambas base URL + path. yambas base URL is: yambasHost + "/yambas/rest/"
+	 *
+	 * @param path
+	 *        the path
+	 * @param mimeType
+	 *        MIME type that should be used
+	 * @param entityPayload
+	 *        the binary data as input stream
+	 * @return request object to check status codes and return values
+	 */
+	public Response postRequestRestEndpoint( String path, final String mimeType, InputStream entityPayload )
+	{
+		return postRequestRestEndpoint( path, mimeType, EntityBuilder.create( ).setStream( entityPayload ).build( ) );
+	}
+
+	/**
+	 * Sends a request to yambas base URL + path. yambas base URL is: yambasHost + "/yambas/rest/"
+	 *
+	 * @param path
+	 *        the path
+	 * @param mimeType
+	 *        MIME type that should be used
+	 * @param httpEntity
+	 *        the HTTP entity that should be used
+	 * @return request object to check status codes and return values
+	 */
+	public Response postRequestRestEndpoint( String path, final String mimeType, final HttpEntity httpEntity )
+	{
+		Response resp = null;
 		final HttpPost request = new HttpPost( this.yambasBase + path );
 
 		setAuthorizationHeader( request );
-		request.addHeader( "ContentType", "application/json" );
+		request.addHeader( "ContentType", mimeType );
 		request.addHeader( "x-apiomat-apikey", getApiKey( ) );
 		request.addHeader( "x-apiomat-system", getSystem( ).toString( ) );
 
 		try
 		{
-			request.setEntity( EntityBuilder.create( ).setStream( payLoad ).build( ) );
+			request.setEntity( httpEntity );
 			final HttpResponse response = this.client.execute( request );
-			return new Response( response );
+			resp = new Response( response );
 		}
 		catch ( final IOException e )
 		{
 			e.printStackTrace( );
 		}
-		return null;
+		return resp;
 	}
 
 	/**
@@ -1450,5 +1531,141 @@ public class AomHttpClient
 		{
 			requestMethod.addHeader( "Authorization", authHeader );
 		}
+	}
+
+	/**
+	 * Upload the given module jar
+	 *
+	 * @param moduleName
+	 *        the name of the module to add
+	 * @param update
+	 *        "true" to update classes and module, "overwrite" to update and overwrite changes done in dashboard
+	 *        in the meantime
+	 * @param jarStream
+	 *        Stream of packaged module jar
+	 * @return request object to check status codes and return values
+	 */
+	public Response uploadModule( String moduleName, final String update, final InputStream jarStream )
+	{
+		return postRequestRestEndpoint( "modules/" + moduleName + "/sdk?update=" + update,
+			ContentType.APPLICATION_OCTET_STREAM.getMimeType( ), jarStream );
+	}
+
+	/**
+	 * Downloads a SDK in given language and return the zipped file in response
+	 *
+	 * @param language
+	 *        language of SDK that should be downloaded
+	 * @return request object to check status codes and return values
+	 * @throws IOException exc
+	 */
+	public Response downloadSDK( final SDKLanguage language ) throws IOException
+	{
+		return downloadSDK( language, null );
+	}
+
+	/**
+	 * Downloads a SDK in given language and extract it to given target path
+	 *
+	 * @param language
+	 *        language of SDK that should be downloaded
+	 * @param targetPath
+	 *        extract path
+	 * @return request object to check status codes and return values
+	 * @throws IOException exc
+	 */
+	public Response downloadSDK( final SDKLanguage language, final String targetPath ) throws IOException
+	{
+		String path =
+			String.format( "customers/%s/apps/%s/sdk/%s", getCustomerName( ), getAppName( ),
+				language.toString( ).toLowerCase( ) );
+		final Response response = getRequestRestEndpoint( path );
+		if ( targetPath != null && targetPath.isEmpty( ) == false )
+		{
+			AomHelper.unzip( response.getEntityContent( ), targetPath );
+		}
+		return response;
+	}
+
+	/**
+	 * Sets a customers roles for a specific app or module, or both
+	 *
+	 * @param customerName
+	 *        the name of the customer
+	 * @param appName
+	 *        name of the app
+	 * @param role
+	 *        customer role that should be set
+	 * @return request object to check status codes and return values
+	 */
+	public Response setRoleForAppBackend( final String customerName, final String appName,
+		final CustomerRole role )
+	{
+		return setRole( customerName, appName, null, role );
+	}
+
+	/**
+	 * Sets a customers roles for a specific module
+	 *
+	 * @param customerName
+	 *        the name of the customer
+	 * @param moduleName
+	 *        name of the module
+	 * @param role
+	 *        customer role that should be set
+	 * @return request object to check status codes and return values
+	 */
+	public Response setRoleForModule( final String customerName, final String moduleName,
+		final CustomerRole role )
+	{
+		return setRole( customerName, null, moduleName, role );
+	}
+
+	/**
+	 * Sets a customers roles for a specific app or module, or both
+	 *
+	 * @param customerName
+	 *        the name of the customer
+	 * @param appName
+	 *        name of the app
+	 * @param moduleName
+	 *        name of the module
+	 * @param role
+	 *        customer role that should be set
+	 * @return request object to check status codes and return values
+	 */
+	public Response setRole( final String customerName, final String appName, final String moduleName,
+		final CustomerRole role )
+	{
+		Response resp = null;
+		String intCustomerName = customerName;
+		if ( intCustomerName == null )
+		{
+			intCustomerName = this.customerName;
+		}
+		List<NameValuePair> formParams = new ArrayList<NameValuePair>( );
+		if ( appName != null && appName.isEmpty( ) == false )
+		{
+			formParams.add( new BasicNameValuePair( "appName", appName ) );
+		}
+		if ( moduleName != null && moduleName.isEmpty( ) == false )
+		{
+			formParams.add( new BasicNameValuePair( "moduleName", moduleName ) );
+		}
+		formParams.add( new BasicNameValuePair( "roleName", role.toString( ) ) );
+		UrlEncodedFormEntity httpEntity = null;
+		try
+		{
+			httpEntity = new UrlEncodedFormEntity( formParams );
+			resp = postRequestRestEndpoint( "customers/" + intCustomerName + "/roles",
+				ContentType.APPLICATION_FORM_URLENCODED.getMimeType( ), httpEntity );
+		}
+		catch ( UnsupportedEncodingException e )
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace( );
+		}
+
+		return resp;
 	}
 }
