@@ -1151,7 +1151,7 @@ public class AomHttpClient
 	}
 
 	/**
-	 * Posts static data, either as image or as file
+	 * Posts static data directly to the app's static data, either as image or as file
 	 *
 	 * @param content the content
 	 * @param isImage indicates whether this is an image or a file
@@ -1178,7 +1178,78 @@ public class AomHttpClient
 	}
 
 	/**
-	 * Deletes static data, either image or file
+	 * Posts static data as attachment to an object, either as image or as file
+	 *
+	 * @param moduleName Name of the module where the object that the data should be attached to is in
+	 * @param modelName Name of the class of the object that the data should be attached to
+	 * @param objectId ID of the object that the data should be attached to
+	 * @param attributeName Name of the attribute of the object that should contain the attachment
+	 * @param content the content
+	 * @param isImage indicates whether this is an image or a file
+	 * @return request object to check status codes and return values
+	 */
+	public Response postStaticData( final String moduleName, final String modelName, final String objectId,
+		final String attributeName, final byte[ ] content, final boolean isImage )
+	{
+		final HttpPost request =
+			new HttpPost(
+				this.yambasBase + "apps/" + this.appName + ( isImage ? "/data/images/" : "/data/files/" ) + moduleName +
+					"/" + modelName + "/" + objectId + "/" + attributeName );
+		request.setEntity( EntityBuilder.create( ).setBinary( content ).build( ) );
+		setAuthorizationHeader( request );
+		request.addHeader( "Content-Type", "application/octet-stream" );
+		request.addHeader( "x-apiomat-apikey", this.apiKey );
+		request.addHeader( "x-apiomat-system", this.system.toString( ) );
+		request.addHeader( "x-apiomat-sdkVersion", this.sdkVersion );
+		try
+		{
+			final HttpResponse response = this.client.execute( request );
+			return new Response( response );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return null;
+	}
+
+	/**
+	 * Fetches a static data attachment from an object, either image or file
+	 *
+	 * @param moduleName Name of the module where the object that the data should be fetched from is in
+	 * @param modelName Name of the class of the object that the data should be fetched from
+	 * @param objectId ID of the object that the data should be fetched from
+	 * @param attributeName Name of the attribute of the object whose attachment should be fetched
+	 * @param id the file id
+	 * @param isImage indicates whether this is an image or a file
+	 * @return request object to check status codes and return values
+	 */
+	public Response getStaticData( final String moduleName, final String modelName, final String objectId,
+		final String attributeName, final String id, final boolean isImage )
+	{
+		final HttpGet request =
+			new HttpGet(
+				this.yambasBase + "apps/" + this.appName + ( isImage ? "/data/images/" : "/data/files/" ) + moduleName +
+					"/" + modelName + "/" + objectId + "/" + attributeName + "/" + id + ".img" );
+		setAuthorizationHeader( request );
+		request.addHeader( "Accept", "application/octet-stream" );
+		request.addHeader( "x-apiomat-apikey", this.apiKey );
+		request.addHeader( "x-apiomat-system", this.system.toString( ) );
+		request.addHeader( "x-apiomat-sdkVersion", this.sdkVersion );
+		try
+		{
+			final HttpResponse response = this.client.execute( request );
+			return new Response( response );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return null;
+	}
+
+	/**
+	 * Deletes static data directly from the app's static data, either image or file
 	 *
 	 * @param id the file id
 	 * @param isImage indicates whether this is an image or a file
@@ -1192,6 +1263,41 @@ public class AomHttpClient
 		request.addHeader( "Content-Type", "application/octet-stream" );
 		request.addHeader( "x-apiomat-apikey", this.apiKey );
 		request.addHeader( "x-apiomat-system", this.system.toString( ) );
+		try
+		{
+			final HttpResponse response = this.client.execute( request );
+			return new Response( response );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return null;
+	}
+
+	/**
+	 * Deletes static data attachment from an object, either image or file
+	 *
+	 * @param moduleName Name of the module where the object that the data should be removed from is in
+	 * @param modelName Name of the class of the object that the data should be removed from
+	 * @param objectId ID of the object that the data should be removed from
+	 * @param attributeName Name of the attribute of the object whose attachment should be removed
+	 * @param id the file id
+	 * @param isImage indicates whether this is an image or a file
+	 * @return request object to check status codes and return values
+	 */
+	public Response deleteStaticData( final String moduleName, final String modelName, final String objectId,
+		final String attributeName, final String id, final boolean isImage )
+	{
+		final HttpDelete request =
+			new HttpDelete(
+				this.yambasBase + "apps/" + this.appName + ( isImage ? "/data/images/" : "/data/files/" ) + moduleName +
+					"/" + modelName + "/" + objectId + "/" + attributeName + "/" + id );
+		setAuthorizationHeader( request );
+		request.addHeader( "Content-Type", "application/octet-stream" );
+		request.addHeader( "x-apiomat-apikey", this.apiKey );
+		request.addHeader( "x-apiomat-system", this.system.toString( ) );
+		request.addHeader( "x-apiomat-sdkVersion", this.sdkVersion );
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
