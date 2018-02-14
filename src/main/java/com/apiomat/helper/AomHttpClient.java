@@ -1186,7 +1186,7 @@ public class AomHttpClient
 	 * @param attributeName Name of the attribute of the object that should contain the attachment
 	 * @param content the content
 	 * @param isImage indicates whether this is an image or a file
-	 * @return request object to check status codes and return values
+	 * @return request object to check status codes and return values, null if an error occured
 	 */
 	public Response postStaticData( final String moduleName, final String modelName, final String objectId,
 		final String attributeName, final byte[ ] content, final boolean isImage )
@@ -1222,7 +1222,7 @@ public class AomHttpClient
 	 * @param attributeName Name of the attribute of the object whose attachment should be fetched
 	 * @param id the file id
 	 * @param isImage indicates whether this is an image or a file
-	 * @return request object to check status codes and return values
+	 * @return request object to check status codes and return values, null if an error occured
 	 */
 	public Response getStaticData( final String moduleName, final String modelName, final String objectId,
 		final String attributeName, final String id, final boolean isImage )
@@ -1284,7 +1284,7 @@ public class AomHttpClient
 	 * @param attributeName Name of the attribute of the object whose attachment should be removed
 	 * @param id the file id
 	 * @param isImage indicates whether this is an image or a file
-	 * @return request object to check status codes and return values
+	 * @return request object to check status codes and return values, null if an error occured
 	 */
 	public Response deleteStaticData( final String moduleName, final String modelName, final String objectId,
 		final String attributeName, final String id, final boolean isImage )
