@@ -14,7 +14,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +61,7 @@ public class AomHttpClient
 
 	private String apiKey = "";
 	private String appName;
+	private Map<String, Object> appConfig = new HashMap<>( );
 	private String sdkVersion = "1.0";
 
 	/**
@@ -757,7 +760,7 @@ public class AomHttpClient
 	 *        the name of the app
 	 * @param system
 	 *        the used system
-	 * @return trequest object to check status codes and return values
+	 * @return response object to check status codes and return values
 	 */
 	public Response getApp( String customerName, String appName, AOMSystem system )
 	{
@@ -766,17 +769,49 @@ public class AomHttpClient
 		try
 		{
 			final HttpResponse resp = this.client.execute( request );
-			final JSONObject json = new JSONObject( EntityUtils.toString( resp.getEntity( ) ) );
+			final byte[ ] entityContent = EntityUtils.toByteArray( resp.getEntity( ) );
+			final JSONObject json = new JSONObject( new String( entityContent, StandardCharsets.UTF_8 ) );
 			final JSONObject keysObj = json.getJSONObject( "apiKeys" );
+			final JSONObject appConfigsObj = json.getJSONObject( "configuration" );
 
+			this.appConfig = appConfigsObj.getJSONObject( system.toString( ).toLowerCase( ) + "Config" ).toMap( );
 			this.apiKey = keysObj.getString( system.toString( ).toLowerCase( ) + "ApiKey" );
-			return new Response( resp );
+			return new Response( resp, entityContent );
 		}
 		catch ( final IOException e )
 		{
 			e.printStackTrace( );
 		}
 		return null;
+	}
+
+	/**
+	 * Returns the appconfig for appbackend which is currently set
+	 *
+	 * @return map with config values for currently selected system
+	 */
+	public Map<String, Object> getAppConfig( )
+	{
+		getApp( this.customerName, this.appName, this.system );
+		return this.appConfig;
+	}
+
+	/**
+	 * Returns the appconfig for given customer, appbackend and system
+	 * 
+	 * @param customerName
+	 *        the name of the customer
+	 * @param appName
+	 *        the name of the app
+	 * @param system
+	 *        the used system
+	 *
+	 * @return request object to check status codes and return values
+	 */
+	public Map<String, Object> getAppConfig( String customerName, String appName, AOMSystem system )
+	{
+		getApp( customerName, appName, system );
+		return this.appConfig;
 	}
 
 	/**

@@ -28,25 +28,30 @@ public class Response
 	private byte[ ] entityContent = null;
 	private Header[ ] headers = null;
 
+	public Response( final HttpResponse response )
+	{
+		this( response, null );
+		try
+		{
+			this.entityContent = EntityUtils.toByteArray( response.getEntity( ) );
+		}
+		catch ( IllegalArgumentException | IOException e )
+		{
+			//Ok
+		}
+	}
+
 	/**
 	 * Constructor
 	 *
 	 * @param response the http response
 	 */
-	public Response( final HttpResponse response )
+	public Response( final HttpResponse response, final byte[ ] entityContent )
 	{
 		this.status = response.getStatusLine( );
 		this.headers = response.getAllHeaders( );
 
-		try
-		{
-			this.entityContent = EntityUtils.toByteArray( response.getEntity( ) );
-			// EntityUtils.consume( response.getEntity( ) );
-		}
-		catch ( IllegalArgumentException | IOException e )
-		{
-			// ok
-		}
+		this.entityContent = entityContent;
 	}
 
 	/**
