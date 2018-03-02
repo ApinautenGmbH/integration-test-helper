@@ -6,7 +6,8 @@ Helper classes for integration tests
 
 | Version | Changes                                                            |
 | --------|--------------------------------------------------------------------|
-| 1.3.0   | Added new method makeModuleNative |
+| 1.4.0   | Added new method makeModuleNative |
+| 1.3.0   | Added new static data methods |
 | 1.2.8   | fixed bug in getApp method; added new method getAppConfig |
 | 1.2.7   | added methods to set roles for an user on appbackend or/and module |
 | 1.2.6   | added method to delete customer with force flag |
