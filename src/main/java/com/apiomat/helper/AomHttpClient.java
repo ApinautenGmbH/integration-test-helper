@@ -636,6 +636,36 @@ public class AomHttpClient
 	}
 
 	/**
+	 * Makes a dynamic module to a native ant-based module (by uploading it internally)
+	 *
+	 * @param moduleName the modules name
+	 *
+	 * @return response object to check status codes
+	 */
+	public Response makeModuleNative( final String moduleName )
+	{
+		Response retResponse = null;
+		HttpGet request = new HttpGet( this.yambasBase + "modules/" + moduleName + "/makeNative" );
+		setAuthorizationHeader( request );
+		request.addHeader( "x-apiomat-system", this.system.toString( ) );
+
+		try
+		{
+			final HttpResponse response = this.client.execute( request );
+			retResponse = new Response( response );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		finally
+		{
+			request.releaseConnection( );
+		}
+		return retResponse;
+	}
+
+	/**
 	 * Sets the app to active state
 	 *
 	 * @return request object to check status codes and return values
@@ -798,7 +828,7 @@ public class AomHttpClient
 
 	/**
 	 * Returns the appconfig for given customer, appbackend and system
-	 * 
+	 *
 	 * @param customerName
 	 *        the name of the customer
 	 * @param appName

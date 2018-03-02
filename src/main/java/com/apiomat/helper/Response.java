@@ -28,6 +28,9 @@ public class Response
 	private byte[ ] entityContent = null;
 	private Header[ ] headers = null;
 
+	/**
+	 * @param response the HTTP response
+	 */
 	public Response( final HttpResponse response )
 	{
 		this( response, null );
@@ -44,7 +47,8 @@ public class Response
 	/**
 	 * Constructor
 	 *
-	 * @param response the http response
+	 * @param response the HTTP response
+	 * @param entityContent content for sending
 	 */
 	public Response( final HttpResponse response, final byte[ ] entityContent )
 	{
@@ -81,6 +85,12 @@ public class Response
 		return content == null ? "" : new String( content );
 	}
 
+	/**
+	 * Get header for name
+	 *
+	 * @param name name of the header
+	 * @return header value or null if nothing was found
+	 */
 	public String getHeader( final String name )
 	{
 		if ( this.headers == null )
