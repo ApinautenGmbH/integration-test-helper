@@ -6,6 +6,7 @@ Helper classes for integration tests
 
 | Version | Changes                                                            |
 | --------|--------------------------------------------------------------------|
+| 1.4.1   | Added a bunch of new methods (getCustomer, getModules,..) |
 | 1.4.0   | Added new method makeModuleNative |
 | 1.3.0   | Added new static data methods |
 | 1.2.8   | fixed bug in getApp method; added new method getAppConfig |

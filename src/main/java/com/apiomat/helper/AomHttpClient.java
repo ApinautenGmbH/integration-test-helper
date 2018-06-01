@@ -51,7 +51,7 @@ public class AomHttpClient
 
 	private final String yambasHost;
 	private final String yambasBase;
-	private final AOMSystem system;
+	private AOMSystem system;
 
 	private String customerName;
 
@@ -151,6 +151,14 @@ public class AomHttpClient
 	public AOMSystem getSystem( )
 	{
 		return this.system;
+	}
+
+	/**
+	 * @param system the system to set
+	 */
+	public void setSystem( AOMSystem system )
+	{
+		this.system = system;
 	}
 
 	/**
@@ -386,6 +394,31 @@ public class AomHttpClient
 	}
 
 	/**
+	 * Returns the specific customer
+	 *
+	 * @param customerName
+	 *        the name of the customer
+	 * @return response object to check status codes and return values
+	 */
+	public Response getCustomer( String customerName )
+	{
+		final HttpGet request = new HttpGet( this.yambasBase + "customers/" + customerName );
+		setAuthorizationHeader( request );
+		try
+		{
+			final HttpResponse resp = this.client.execute( request );
+			final byte[ ] entityContent = EntityUtils.toByteArray( resp.getEntity( ) );
+
+			return new Response( resp, entityContent );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return null;
+	}
+
+	/**
 	 * Deletes the customer and sets customerName to null ({@link #getCustomerName()})
 	 *
 	 * @param customerName unique name of the customer
@@ -534,6 +567,34 @@ public class AomHttpClient
 			final HttpResponse response = this.client.execute( request );
 
 			return new Response( response );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return null;
+	}
+
+	/**
+	 * Gets used modules forapp
+	 *
+	 * @param customerName
+	 *        the name of the customer which owns the app
+	 * @param appName
+	 *        the name of the app
+	 * @return request object to check status codes and return values
+	 */
+	public Response getUsedModulesForApp( String customerName, String appName )
+	{
+		final HttpGet request =
+			new HttpGet( this.yambasBase + "customers/" + customerName + "/apps/" + appName + "/usedmodules" );
+		setAuthorizationHeader( request );
+		request.addHeader( "x-apiomat-system", this.system.toString( ) );
+		try
+		{
+			final HttpResponse resp = this.client.execute( request );
+			final byte[ ] entityContent = EntityUtils.toByteArray( resp.getEntity( ) );
+			return new Response( resp, entityContent );
 		}
 		catch ( final IOException e )
 		{
@@ -816,6 +877,29 @@ public class AomHttpClient
 	}
 
 	/**
+	 * Returns all accessible apps for this customer
+	 *
+	 * @param customerName
+	 * @return response object to check status codes and return values
+	 */
+	public Response getApps( String customerName )
+	{
+		final HttpGet request = new HttpGet( this.yambasBase + "customers/" + customerName + "/apps" );
+		setAuthorizationHeader( request );
+		try
+		{
+			final HttpResponse resp = this.client.execute( request );
+			final byte[ ] entityContent = EntityUtils.toByteArray( resp.getEntity( ) );
+			return new Response( resp, entityContent );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return null;
+	}
+
+	/**
 	 * Returns the appconfig for appbackend which is currently set
 	 *
 	 * @return map with config values for currently selected system
@@ -888,6 +972,30 @@ public class AomHttpClient
 	{
 		final HttpDelete request = new HttpDelete( this.yambasBase + "apps/" + this.appName + "/models" );
 		setAuthorizationHeader( request );
+		try
+		{
+			final HttpResponse response = this.client.execute( request );
+			return new Response( response );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return null;
+	}
+
+	/**
+	 * Returns all Modules the customer has read right for
+	 *
+	 * @return request object to check status codes and return values
+	 */
+	public Response getModules( )
+	{
+		final HttpGet request = new HttpGet( this.yambasBase + "modules" );
+		setAuthorizationHeader( request );
+		request.addHeader( "ContentType", "application/json" );
+		request.addHeader( "x-apiomat-system", this.system.toString( ) );
+		request.addHeader( "x-apiomat-sdkVersion", this.sdkVersion );
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
