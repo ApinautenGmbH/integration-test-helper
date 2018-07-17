@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.apiomat.helper</groupId>
 	<artifactId>integration-test-helper</artifactId>
-	<version>1.4.1</version>
+	<version>1.4.2</version>
 	<name>Integration-Test Helper</name>
 	<description>Helper classes for integration tests</description>
 	<licenses>

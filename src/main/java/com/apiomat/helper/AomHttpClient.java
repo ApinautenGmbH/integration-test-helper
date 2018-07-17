@@ -261,8 +261,9 @@ public class AomHttpClient
 		{
 			request.setEntity( new UrlEncodedFormEntity( data ) );
 			final HttpResponse response = this.client.execute( request );
+			final String ret = EntityUtils.toString( response.getEntity( ) );
 			request.releaseConnection( );
-			return AomHelper.getStringFromStream( response.getEntity( ).getContent( ) );
+			return ret;
 		}
 		catch ( final IOException e )
 		{
