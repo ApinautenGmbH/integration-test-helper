@@ -261,8 +261,9 @@ public class AomHttpClient
 		{
 			request.setEntity( new UrlEncodedFormEntity( data ) );
 			final HttpResponse response = this.client.execute( request );
+			final String ret = EntityUtils.toString( response.getEntity( ) );
 			request.releaseConnection( );
-			return AomHelper.getStringFromStream( response.getEntity( ).getContent( ) );
+			return ret;
 		}
 		catch ( final IOException e )
 		{
@@ -505,7 +506,7 @@ public class AomHttpClient
 	 *
 	 * @param customerName the name of the customer
 	 * @param moduleName the name of the module to create
-	 * @return request object to check status codes and return values
+	 * @return response object to check status codes and return values
 	 */
 	public Response createModule( final String customerName, final String moduleName )
 	{
@@ -515,6 +516,116 @@ public class AomHttpClient
 		final List<NameValuePair> data = new ArrayList<NameValuePair>( );
 		data.add( new BasicNameValuePair( "moduleName", moduleName ) );
 		data.add( new BasicNameValuePair( "customerName", customerName ) );
+
+		try
+		{
+			request.setEntity( new UrlEncodedFormEntity( data ) );
+			final HttpResponse response = this.client.execute( request );
+			return new Response( response );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return null;
+	}
+
+	/**
+	 * Creates a meta model for a specific module
+	 *
+	 * @param moduleName the name of the module to create
+	 * @param metaModelName the name of the meta model
+	 * @return response object to check status codes and return values
+	 */
+	public Response createMetaModel( String moduleName, String metaModelName )
+	{
+		final HttpPost request = new HttpPost( this.yambasBase + "modules/" + moduleName + "/metamodels" );
+		setAuthorizationHeader( request );
+
+		final List<NameValuePair> data = new ArrayList<NameValuePair>( );
+		data.add( new BasicNameValuePair( "metaModelName", metaModelName ) );
+
+		try
+		{
+			request.setEntity( new UrlEncodedFormEntity( data ) );
+			final HttpResponse response = this.client.execute( request );
+			return new Response( response );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return null;
+	}
+
+	/**
+	 * Creates a meta model attribute for a specific meta model
+	 *
+	 * @param moduleName the name of the module to create
+	 * @param metaModelId the id of the meta model
+	 * @param attributeName the name of the attribute
+	 * @param attributeType the type of the attribute (<code>null</code> or "Link" if reference)
+	 * @param refModelId the id of the referenced Model (if this is a reference attribute)
+	 * @param isCollection true, if the attribute should be a collection
+	 * @param isMandatory true, if the attribute should be mandatory
+	 * @param isEmbeddedObject true, if the attribute should be embedded
+	 * @param isIndexed true, if the attribute should be indexed (on database level)
+	 * @return response object to check status codes and return values
+	 */
+	public Response createMetaModelAttribute( String moduleName, String metaModelId, String attributeName,
+		String attributeType, String refModelId, boolean isCollection, boolean isMandatory, boolean isEmbeddedObject,
+		boolean isIndexed )
+	{
+		final HttpPost request =
+			new HttpPost( this.yambasBase + "modules/" + moduleName + "/metamodels/" + metaModelId + "/attributes" );
+		setAuthorizationHeader( request );
+
+		final List<NameValuePair> data = new ArrayList<NameValuePair>( );
+		data.add( new BasicNameValuePair( "attributeName", attributeName ) );
+		if ( attributeType != null )
+		{
+			data.add( new BasicNameValuePair( "attributeType", attributeType ) );
+		}
+		if ( refModelId != null )
+		{
+			data.add( new BasicNameValuePair( "refModelId", refModelId ) );
+		}
+
+		data.add( new BasicNameValuePair( "isCollection", Boolean.toString( isCollection ) ) );
+		data.add( new BasicNameValuePair( "isMandatory", Boolean.toString( isMandatory ) ) );
+		data.add( new BasicNameValuePair( "isEmbeddedObject", Boolean.toString( isEmbeddedObject ) ) );
+		data.add( new BasicNameValuePair( "isIndexed", Boolean.toString( isIndexed ) ) );
+
+		try
+		{
+			request.setEntity( new UrlEncodedFormEntity( data ) );
+			final HttpResponse response = this.client.execute( request );
+			return new Response( response );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return null;
+	}
+
+	/**
+	 * Sets a parent meta model to the given meta model
+	 *
+	 * @param moduleName the name of the module to create
+	 * @param metaModelId the id of the meta model
+	 * @param parentMetaModelId the id of the parent meta model
+	 * @return response object to check status codes and return values
+	 */
+	public Response setParentMetaModel( final String moduleName, final String metaModelId,
+		final String parentMetaModelId )
+	{
+		final HttpPost request =
+			new HttpPost( this.yambasBase + "modules/" + moduleName + "/metamodels/" + metaModelId + "/parent" );
+		setAuthorizationHeader( request );
+
+		final List<NameValuePair> data = new ArrayList<NameValuePair>( );
+		data.add( new BasicNameValuePair( "parentMetaModelId", parentMetaModelId ) );
 
 		try
 		{
@@ -1163,6 +1274,40 @@ public class AomHttpClient
 		{
 			additionalRequestHeaders.forEach( ( name, value ) -> request.addHeader( name, value ) );
 		}
+		try
+		{
+			final HttpResponse response = this.client.execute( request );
+			return new Response( response );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return null;
+	}
+
+	/**
+	 * Get a count of the objects for the given query
+	 *
+	 * @param moduleName
+	 *        the modulenname
+	 * @param dataModelName
+	 *        the name of the datamodels
+	 * @param query
+	 *        ApiOmat query string, may be null to append no query
+	 * @return response object to check status codes and return values (body contains the number of objects)
+	 */
+	public Response getObjectCount( final String moduleName, final String dataModelName, final String query )
+	{
+		final HttpGet request = new HttpGet(
+			this.yambasBase + "apps/" + this.appName + "/models/" + moduleName + "/" + dataModelName + "/count" +
+				( query == null ? "" : "?q=" + query ) );
+		setAuthorizationHeader( request );
+		request.addHeader( "ContentType", "application/json" );
+		request.addHeader( "x-apiomat-apikey", this.apiKey );
+		request.addHeader( "x-apiomat-system", this.system.toString( ) );
+		request.addHeader( "x-apiomat-sdkVersion", this.sdkVersion );
+
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
