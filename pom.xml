@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.apiomat.helper</groupId>
@@ -6,17 +7,30 @@
 	<version>1.5.0</version>
 	<name>Integration-Test Helper</name>
 	<description>Helper classes for integration tests</description>
+
+	<url>https://github.com/apiOmat/integration-test-helper</url>
+	<scm>
+		<url>https://github.com/apiOmat/integration-test-helper</url>
+		<developerConnection>Apinauten GmbH</developerConnection>
+	</scm>
+	<organization>
+		<name>Apinauten GmbH</name>
+		<url>https://apiomat.com</url>
+	</organization>
+
 	<licenses>
 		<license>
 			<name>Apache License 2.0</name>
 		</license>
 	</licenses>
+
 	<developers>
 		<developer>
 			<url>https://www.apiomat.com</url>
 			<organization>Apinauten GmbH</organization>
 		</developer>
 	</developers>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -39,6 +53,42 @@
 			<version>20170516</version>
 		</dependency>
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>publicnexus</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.5</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.7</version>
+						<extensions>true</extensions>
+						<configuration>
+							<serverId>ossrh</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<build>
 		<plugins>
 			<!-- correct java version -->
@@ -79,42 +129,19 @@
 					</execution>
 				</executions>
 			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.5</version>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.7</version>
-				<extensions>true</extensions>
-				<configuration>
-					<serverId>ossrh</serverId>
-					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-					<autoReleaseAfterClose>true</autoReleaseAfterClose>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
-	<url>https://github.com/apiOmat/integration-test-helper</url>
-	<scm>
-		<url>https://github.com/apiOmat/integration-test-helper</url>
-		<developerConnection>Apinauten GmbH</developerConnection>
-	</scm>
-	<organization>
-		<name>Apinauten GmbH</name>
-		<url>https://apiomat.com</url>
-	</organization>
+
+	<distributionManagement>
+		<repository>
+			<id>nexus</id>
+			<name>Releases</name>
+			<url>https://nexus.apiomat.com/repository/maven-releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus</id>
+			<name>Snapshot</name>
+			<url>https://nexus.apiomat.com/repository/maven-snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>
