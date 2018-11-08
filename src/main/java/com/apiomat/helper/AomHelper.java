@@ -10,8 +10,6 @@
  * thum */
 package com.apiomat.helper;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,7 +27,6 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
-import org.junit.Assert;
 
 /**
  * Helper class with some static methods used in module tests
@@ -63,7 +60,7 @@ public class AomHelper
 		{
 			return "";
 		}
-		int idx = inputUrl.lastIndexOf( '/' );
+		final int idx = inputUrl.lastIndexOf( '/' );
 		if ( idx == -1 )
 		{
 			return "";
@@ -77,14 +74,14 @@ public class AomHelper
 	 * @param is the InputStream
 	 * @return the string from id
 	 */
-	public static String getStringFromStream( InputStream is )
+	public static String getStringFromStream( final InputStream is )
 	{
-		StringWriter writer = new StringWriter( );
+		final StringWriter writer = new StringWriter( );
 		try
 		{
 			IOUtils.copy( is, writer, "UTF-8" );
 		}
-		catch ( IOException e )
+		catch ( final IOException e )
 		{
 			return null;
 		}
@@ -105,66 +102,60 @@ public class AomHelper
 	{
 		String result = "";
 		final Process process;
-		try
+		/* set system in properties file and upload */
+		final Properties sdkProp = new Properties( );
+		sdkProp.load( new FileInputStream( new File( path + "/sdk.properties" ) ) );
+		sdkProp.setProperty( "password", userPassword );
+		sdkProp.store( new FileOutputStream( new File( path + "/sdk.properties" ) ), null );
+		String antBin = "ant";
+		if ( System.getenv( "ANT_BIN" ) != null )
 		{
-			/* set system in properties file and upload */
-			final Properties sdkProp = new Properties( );
-			sdkProp.load( new FileInputStream( new File( path + "/sdk.properties" ) ) );
-			sdkProp.setProperty( "password", userPassword );
-			sdkProp.store( new FileOutputStream( new File( path + "/sdk.properties" ) ), null );
-			String antBin = "ant";
-			if ( System.getenv( "ANT_BIN" ) != null )
-			{
-				antBin = System.getenv( "ANT_BIN" );
-			}
+			antBin = System.getenv( "ANT_BIN" );
+		}
 
-			/* if running this test on a local windows-system, set the ANT_BIN env var. */
-			final ProcessBuilder pb =
-				new ProcessBuilder( antBin, "-Dant.build.javac.target=1.8", "-Dant.build.javac.source=1.8", "-f",
-					"build.xml", target );
-			if ( pb.environment( ).containsKey( "JAVA_HOME" ) == false )
-			{
-				/* For executing the testJava8 test, we sometimes need to set the java home to a java 8 JDK; if
-				 * necessary, extend this on windows systems */
-				pb.environment( ).put( "JAVA_HOME", "/opt/jdk" );
-			}
-			pb.directory( new File( path ) );
-			pb.redirectErrorStream( true );
-			process = pb.start( );
+		/* if running this test on a local windows-system, set the ANT_BIN env var. */
+		final ProcessBuilder pb =
+			new ProcessBuilder( antBin, "-Dant.build.javac.target=1.8", "-Dant.build.javac.source=1.8", "-f",
+				"build.xml", target );
+		if ( pb.environment( ).containsKey( "JAVA_HOME" ) == false )
+		{
+			/* For executing the testJava8 test, we sometimes need to set the java home to a java 8 JDK; if
+			 * necessary, extend this on windows systems */
+			pb.environment( ).put( "JAVA_HOME", "/opt/jdk" );
+		}
+		pb.directory( new File( path ) );
+		pb.redirectErrorStream( true );
+		process = pb.start( );
 
-			final InputStream is = process.getInputStream( );
-			final InputStreamReader isr = new InputStreamReader( is );
-			final BufferedReader br = new BufferedReader( isr );
-			String line;
-			boolean successfull = false;
-			boolean isNextResultLine = false;
-			while ( ( line = br.readLine( ) ) != null )
-			{
-				System.out.println( line );
-				if ( isNextResultLine )
-				{ /* store the line after "BUILD FAILED" to get the correct error message */
-					result = line;
-					isNextResultLine = false;
-				}
-				if ( line.contains( "BUILD SUCCESSFUL" ) )
-				{
-					successfull = true;
-					result = line;
-				}
-				else if ( line.contains( "BUILD FAILED" ) )
-				{
-					isNextResultLine = true;
-				}
-
+		final InputStream is = process.getInputStream( );
+		final InputStreamReader isr = new InputStreamReader( is );
+		final BufferedReader br = new BufferedReader( isr );
+		String line;
+		boolean successfull = false;
+		boolean isNextResultLine = false;
+		while ( ( line = br.readLine( ) ) != null )
+		{
+			System.out.println( line );
+			if ( isNextResultLine )
+			{ /* store the line after "BUILD FAILED" to get the correct error message */
+				result = line;
+				isNextResultLine = false;
 			}
-			assertTrue( successfull );
-			br.close( );
+			if ( line.contains( "BUILD SUCCESSFUL" ) )
+			{
+				successfull = true;
+				result = line;
+			}
+			else if ( line.contains( "BUILD FAILED" ) )
+			{
+				isNextResultLine = true;
+			}
 
 		}
-		catch ( final Exception e )
+		br.close( );
+		if ( successfull == false )
 		{
-			e.printStackTrace( );
-			Assert.fail( );
+			throw new IllegalStateException( "Result was not successfull!" );
 		}
 
 		return result;
@@ -177,8 +168,9 @@ public class AomHelper
 	 *        data to unzip (assumes a ZipInputStream inside the byte array)
 	 * @param targetPath the oath to unzip to
 	 * @return number of files having been unzipped
+	 * @throws IOException
 	 */
-	public static long unzip( final byte[ ] data, final String targetPath )
+	public static long unzip( final byte[ ] data, final String targetPath ) throws IOException
 	{
 		final InputStream input = new ByteArrayInputStream( data );
 		return unzip( input, targetPath );
@@ -191,14 +183,14 @@ public class AomHelper
 	 *        input stream to unzip (assumes a ZipInputStream )
 	 * @param targetPath the oath to unzip to
 	 * @return number of files having been unzipped
+	 * @throws IOException
 	 */
-	public static long unzip( final InputStream input, final String targetPath )
+	public static long unzip( final InputStream input, final String targetPath ) throws IOException
 	{
 		final byte[ ] buffer = new byte[ 1024 ];
-		final ZipInputStream zip = new ZipInputStream( input );
-		long unzippedFiles = 0;
-		try
+		try (final ZipInputStream zip = new ZipInputStream( input ))
 		{
+			long unzippedFiles = 0;
 			int len = 0;
 			ZipEntry e = zip.getNextEntry( );
 
@@ -220,12 +212,7 @@ public class AomHelper
 				}
 				e = zip.getNextEntry( );
 			}
-			zip.close( );
+			return unzippedFiles;
 		}
-		catch ( IOException e )
-		{
-			Assert.fail( );
-		}
-		return unzippedFiles;
 	}
 }

@@ -24,10 +24,10 @@
 			<version>4.5.3</version>
 		</dependency>
 		<dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>4.5.2</version>
-        </dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<version>4.5.2</version>
+		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -37,11 +37,6 @@
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>20170516</version>
-		</dependency>
-		<dependency>
-			<groupId>com.restfuse</groupId>
-			<artifactId>com.eclipsesource.restfuse</artifactId>
-			<version>1.2.0</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -99,7 +94,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
