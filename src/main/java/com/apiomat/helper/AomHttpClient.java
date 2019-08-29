@@ -10,16 +10,6 @@
  * thum */
 package com.apiomat.helper;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
@@ -39,6 +29,16 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Base class for interacting with ApiOmat programmatically.
@@ -247,7 +247,7 @@ public class AomHttpClient
 	public String getOauth2Token( )
 	{
 		final HttpPost request = new HttpPost( this.yambasHost + "/yambas/oauth/token" );
-		final List<NameValuePair> data = new ArrayList<NameValuePair>( );
+		final List<NameValuePair> data = new ArrayList<>( );
 		data.add( new BasicNameValuePair( "grant_type", "aom_user" ) );
 		data.add( new BasicNameValuePair( "client_id", this.getAppName( ) ) );
 		data.add( new BasicNameValuePair( "client_secret", this.getApiKey( ) ) );
@@ -300,7 +300,7 @@ public class AomHttpClient
 	public String refreshOauth2Token( final String refreshToken )
 	{
 		final HttpPost request = new HttpPost( this.yambasHost + "/yambas/oauth/token" );
-		final List<NameValuePair> data = new ArrayList<NameValuePair>( );
+		final List<NameValuePair> data = new ArrayList<>( );
 		data.add( new BasicNameValuePair( "grant_type", "refresh_token" ) );
 		data.add( new BasicNameValuePair( "client_id", this.getAppName( ) ) );
 		data.add( new BasicNameValuePair( "client_secret", this.getApiKey( ) ) );
@@ -374,7 +374,7 @@ public class AomHttpClient
 		final HttpPost request = new HttpPost( this.yambasBase + "customers" );
 		setAuthorizationHeader( request );
 
-		final List<NameValuePair> data = new ArrayList<NameValuePair>( );
+		final List<NameValuePair> data = new ArrayList<>( );
 		data.add( new BasicNameValuePair( "name", customerName ) );
 		data.add( new BasicNameValuePair( "email", email ) );
 		data.add( new BasicNameValuePair( "password", password ) );
@@ -483,7 +483,7 @@ public class AomHttpClient
 		final HttpPost request = new HttpPost( this.yambasBase + "customers/" + customerName + "/apps" );
 		setAuthorizationHeader( request );
 
-		final List<NameValuePair> data = new ArrayList<NameValuePair>( );
+		final List<NameValuePair> data = new ArrayList<>( );
 		data.add( new BasicNameValuePair( "name", appName ) );
 
 		try
@@ -513,7 +513,7 @@ public class AomHttpClient
 		final HttpPost request = new HttpPost( this.yambasBase + "modules" );
 		setAuthorizationHeader( request );
 
-		final List<NameValuePair> data = new ArrayList<NameValuePair>( );
+		final List<NameValuePair> data = new ArrayList<>( );
 		data.add( new BasicNameValuePair( "moduleName", moduleName ) );
 		data.add( new BasicNameValuePair( "customerName", customerName ) );
 
@@ -537,12 +537,12 @@ public class AomHttpClient
 	 * @param metaModelName the name of the meta model
 	 * @return response object to check status codes and return values
 	 */
-	public Response createMetaModel( String moduleName, String metaModelName )
+	public Response createMetaModel( final String moduleName, final String metaModelName )
 	{
 		final HttpPost request = new HttpPost( this.yambasBase + "modules/" + moduleName + "/metamodels" );
 		setAuthorizationHeader( request );
 
-		final List<NameValuePair> data = new ArrayList<NameValuePair>( );
+		final List<NameValuePair> data = new ArrayList<>( );
 		data.add( new BasicNameValuePair( "metaModelName", metaModelName ) );
 
 		try
@@ -572,15 +572,17 @@ public class AomHttpClient
 	 * @param isIndexed true, if the attribute should be indexed (on database level)
 	 * @return response object to check status codes and return values
 	 */
-	public Response createMetaModelAttribute( String moduleName, String metaModelId, String attributeName,
-		String attributeType, String refModelId, boolean isCollection, boolean isMandatory, boolean isEmbeddedObject,
-		boolean isIndexed )
+	public Response createMetaModelAttribute( final String moduleName, final String metaModelId,
+		final String attributeName,
+		final String attributeType, final String refModelId, final boolean isCollection, final boolean isMandatory,
+		final boolean isEmbeddedObject,
+		final boolean isIndexed )
 	{
 		final HttpPost request =
 			new HttpPost( this.yambasBase + "modules/" + moduleName + "/metamodels/" + metaModelId + "/attributes" );
 		setAuthorizationHeader( request );
 
-		final List<NameValuePair> data = new ArrayList<NameValuePair>( );
+		final List<NameValuePair> data = new ArrayList<>( );
 		data.add( new BasicNameValuePair( "attributeName", attributeName ) );
 		if ( attributeType != null )
 		{
@@ -624,7 +626,7 @@ public class AomHttpClient
 			new HttpPost( this.yambasBase + "modules/" + moduleName + "/metamodels/" + metaModelId + "/parent" );
 		setAuthorizationHeader( request );
 
-		final List<NameValuePair> data = new ArrayList<NameValuePair>( );
+		final List<NameValuePair> data = new ArrayList<>( );
 		data.add( new BasicNameValuePair( "parentMetaModelId", parentMetaModelId ) );
 
 		try
@@ -669,7 +671,7 @@ public class AomHttpClient
 		setAuthorizationHeader( request );
 		request.addHeader( "x-apiomat-system", this.system.toString( ) );
 
-		final List<NameValuePair> data = new ArrayList<NameValuePair>( );
+		final List<NameValuePair> data = new ArrayList<>( );
 		data.add( new BasicNameValuePair( "moduleName", moduleName ) );
 
 		try
@@ -1963,7 +1965,7 @@ public class AomHttpClient
 		{
 			intCustomerName = this.customerName;
 		}
-		final List<NameValuePair> formParams = new ArrayList<NameValuePair>( );
+		final List<NameValuePair> formParams = new ArrayList<>( );
 		if ( appName != null && appName.isEmpty( ) == false )
 		{
 			formParams.add( new BasicNameValuePair( "appName", appName ) );
@@ -1987,5 +1989,35 @@ public class AomHttpClient
 		}
 
 		return resp;
+	}
+
+	/* endpoints for versioned modules (should be moved to separate class maybe?) */
+
+	/**
+	 * Deletes a module
+	 *
+	 * @param moduleName       the name of the module to delete
+	 * @param moduleVersion    the version of the module to delete
+	 * @param deleteCompletely if set to false, the module is only deleted from the current system and wil still exist in database
+	 * @return request object to check status codes and return values
+	 */
+	public Response deleteModuleVersion( final String moduleName, final String moduleVersion,
+		final boolean deleteCompletely )
+	{
+		final String path = String.format( "modules/%s/v/%s", moduleName, moduleVersion );
+		final HttpDelete request = new HttpDelete(
+			this.yambasBase + path + "?deleteCompletely=" + String.valueOf( deleteCompletely ) );
+		setAuthorizationHeader( request );
+		request.addHeader( "x-apiomat-system", this.system.toString( ) );
+		try
+		{
+			final HttpResponse response = this.client.execute( request );
+			return new Response( response );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return null;
 	}
 }
