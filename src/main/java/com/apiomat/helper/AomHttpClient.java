@@ -2004,7 +2004,8 @@ public class AomHttpClient
 	public Response deleteModuleVersion( final String moduleName, final String moduleVersion,
 		final boolean deleteCompletely )
 	{
-		final String path = String.format( "modules/%s/v/%s", moduleName, moduleVersion );
+		final String path = "modules/" + moduleName + "/v/" + moduleVersion;
+
 		final HttpDelete request = new HttpDelete(
 			this.yambasBase + path + "?deleteCompletely=" + String.valueOf( deleteCompletely ) );
 		setAuthorizationHeader( request );
