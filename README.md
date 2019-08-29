@@ -6,7 +6,8 @@ Helper classes for integration tests
 
 | Version | Changes                                                            |
 | --------|--------------------------------------------------------------------|
-| 1.5.0   | Removed restfuse dependency and throwing exceptions in AOMHelper instead of asserts
+| 1.6.0   | Added method for deleting module with version number |
+| 1.5.0   | Removed restfuse dependency and throwing exceptions in AOMHelper instead of asserts ]
 | 1.4.1   | Added a bunch of new methods (getCustomer, getModules,..) |
 | 1.4.0   | Added new method makeModuleNative |
 | 1.3.0   | Added new static data methods |
