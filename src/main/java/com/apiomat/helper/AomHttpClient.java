@@ -572,11 +572,9 @@ public class AomHttpClient
 	 * @param isIndexed true, if the attribute should be indexed (on database level)
 	 * @return response object to check status codes and return values
 	 */
-	public Response createMetaModelAttribute( final String moduleName, final String metaModelId,
-		final String attributeName,
-		final String attributeType, final String refModelId, final boolean isCollection, final boolean isMandatory,
-		final boolean isEmbeddedObject,
-		final boolean isIndexed )
+	public Response createMetaModelAttribute( String moduleName, String metaModelId, String attributeName,
+		String attributeType, String refModelId, boolean isCollection, boolean isMandatory, boolean isEmbeddedObject,
+		boolean isIndexed )
 	{
 		final HttpPost request =
 			new HttpPost( this.yambasBase + "modules/" + moduleName + "/metamodels/" + metaModelId + "/attributes" );
