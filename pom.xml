@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.apiomat.helper</groupId>
 	<artifactId>integration-test-helper</artifactId>
-	<version>1.5.0</version>
+	<version>1.6.0</version>
 	<name>Integration-Test Helper</name>
 	<description>Helper classes for integration tests</description>
 
@@ -30,6 +30,12 @@
 			<organization>Apinauten GmbH</organization>
 		</developer>
 	</developers>
+
+	<properties>
+		<java.version>1.8</java.version>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+	</properties>
 
 	<dependencies>
 		<dependency>
