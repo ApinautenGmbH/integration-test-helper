@@ -572,9 +572,11 @@ public class AomHttpClient
 	 * @param isIndexed true, if the attribute should be indexed (on database level)
 	 * @return response object to check status codes and return values
 	 */
-	public Response createMetaModelAttribute( String moduleName, String metaModelId, String attributeName,
-		String attributeType, String refModelId, boolean isCollection, boolean isMandatory, boolean isEmbeddedObject,
-		boolean isIndexed )
+	public Response createMetaModelAttribute( final String moduleName, final String metaModelId,
+		final String attributeName,
+		final String attributeType, final String refModelId, final boolean isCollection, final boolean isMandatory,
+		final boolean isEmbeddedObject,
+		final boolean isIndexed )
 	{
 		final HttpPost request =
 			new HttpPost( this.yambasBase + "modules/" + moduleName + "/metamodels/" + metaModelId + "/attributes" );
@@ -2011,6 +2013,55 @@ public class AomHttpClient
 		try
 		{
 			final HttpResponse response = this.client.execute( request );
+			return new Response( response );
+		}
+		catch ( final IOException e )
+		{
+			e.printStackTrace( );
+		}
+		return null;
+	}
+
+	/**
+	 * Adds the given version of module to the app and customer which were set
+	 *
+	 * @param moduleName name of the module to add to the current app
+	 * @return request object to check status codes and return values
+	 */
+	public Response addModuleVersionToApp( final String moduleName, final String moduleVersion )
+	{
+		return addModuleVersionToApp( this.customerName, this.appName, moduleName, moduleVersion );
+	}
+
+	/**
+	 * Adds the module in specific to the app
+	 *
+	 * @param customerName  the name of the customer which owns the app
+	 * @param appName       the name of the app
+	 * @param moduleName    the name of the module to add
+	 * @param moduleVersion the version of the module to add (can be null, then latest will be used)
+	 * @return request object to check status codes and return values
+	 */
+	public Response addModuleVersionToApp( final String customerName, final String appName, final String moduleName,
+		final String moduleVersion )
+	{
+		final HttpPost request = new HttpPost(
+			this.yambasBase + "customers/" + customerName + "/apps/" + appName + "/usedmoduleversions" );
+		setAuthorizationHeader( request );
+		request.addHeader( "x-apiomat-system", this.system.toString( ) );
+
+		final List<NameValuePair> data = new ArrayList<>( );
+		data.add( new BasicNameValuePair( "moduleName", moduleName ) );
+		if ( moduleVersion != null && moduleVersion.isEmpty( ) == false )
+		{
+			data.add( new BasicNameValuePair( "moduleVersion", moduleVersion ) );
+		}
+
+		try
+		{
+			request.setEntity( new UrlEncodedFormEntity( data ) );
+			final HttpResponse response = this.client.execute( request );
+
 			return new Response( response );
 		}
 		catch ( final IOException e )
